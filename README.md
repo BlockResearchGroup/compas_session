@@ -2,6 +2,10 @@
 
 Session management for COMPAS workflows and tools
 
+> [!WARNING]  
+> This package is under active development,
+> don't use it for anything important for now...
+
 ## Installation
 
 Stable releases can be installed from PyPI.
