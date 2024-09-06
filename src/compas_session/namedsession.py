@@ -19,10 +19,6 @@ class NamedSession:
     _instances = {}
     _is_inited = False
 
-    CONFIG = {
-        "autosave.events": True,
-    }
-
     def __new__(cls, *, name):
         if name not in cls._instances:
             instance = object.__new__(cls)
