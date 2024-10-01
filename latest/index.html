@@ -171,33 +171,18 @@
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="examples.html">
-                        Examples
-                      </a>
-                    </li>
-                
-
-                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="api.html">
                         API Reference
                       </a>
                     </li>
                 
-            <div class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    More
-                </button>
-                <div class="dropdown-menu">
-                    
+
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="license.html">
                         License
                       </a>
                     </li>
                 
-                </div>
-            </div>
-            
   </ul> -->
 </nav></div>
       
@@ -352,33 +337,18 @@ document.write(`
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="examples.html">
-                        Examples
-                      </a>
-                    </li>
-                
-
-                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="api.html">
                         API Reference
                       </a>
                     </li>
                 
-            <div class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    More
-                </button>
-                <div class="dropdown-menu">
-                    
+
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="license.html">
                         License
                       </a>
                     </li>
                 
-                </div>
-            </div>
-            
   </ul> -->
 </nav></div>
         
@@ -465,9 +435,11 @@ document.write(`
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/compas_session.html">compas_session</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/compas_session.html">compas_session</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_session.namedsession.NamedSession.html">NamedSession</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
@@ -507,7 +479,14 @@ document.write(`
                   
   <section id="compas-session">
 <h1>compas_session</h1>
-<p class="lead">Session management for COMPAS workflows and tools</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This package is under active development and has no stable releases yet.
+Its functionality may change frequently…</p>
+</div>
+<p class="lead">This package provides session objects for managing
+data exchange between different processes/scripts in project workflows, and between different GUI commands,
+and for data persistence in between consecutive sessions.</p>
 <section id="table-of-contents">
 <h2>Table of Contents</h2>
 <div class="toctree-wrapper compound">
@@ -515,9 +494,11 @@ document.write(`
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/compas_session.html">compas_session</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/compas_session.html">compas_session</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_session.namedsession.NamedSession.html">NamedSession</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
