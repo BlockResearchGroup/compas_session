@@ -1,10 +1,10 @@
 # COMPAS Session
 
-Session management for COMPAS workflows and tools
-
 > [!WARNING]  
 > This package is under active development,
 > don't use it for anything important for now...
+
+Session management for COMPAS workflows and tools
 
 ## Installation
 
@@ -30,4 +30,3 @@ please check out the online documentation here: [COMPAS Session docs](https://bl
 ## Issue Tracker
 
 If you find a bug or if you have a problem with running the code, please file an issue on the [Issue Tracker](https://github.com/blockresearchgroup/compas_session/issues).
-

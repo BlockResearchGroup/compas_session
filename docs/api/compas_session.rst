@@ -5,5 +5,11 @@ compas_session
 .. currentmodule:: compas_session
 
 
-.. toctree::
-    :maxdepth: 1
+Classes
+=======
+
+.. autosummary::
+    :toctree: generated/
+    :nosignatures:
+
+    namedsession.NamedSession
