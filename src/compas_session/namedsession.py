@@ -39,7 +39,7 @@ class NamedSession:
     _instances = {}
     _is_inited = False
 
-    def __new__(cls, *, name):
+    def __new__(cls, *, name: str, **kwargs):
         if name not in cls._instances:
             instance = object.__new__(cls)
             instance._is_inited = False
