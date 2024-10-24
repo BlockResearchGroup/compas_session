@@ -12,4 +12,5 @@ Classes
     :toctree: generated/
     :nosignatures:
 
-    namedsession.NamedSession
+    session.Session
+    settings.Settings
