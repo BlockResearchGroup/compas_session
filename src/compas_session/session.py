@@ -14,12 +14,14 @@ import compas.geometry
 import compas.tolerance
 from compas.scene import Scene
 
+from .settings import Settings
 
-class NamedSessionError(Exception):
+
+class SessionError(Exception):
     pass
 
 
-class NamedSession:
+class Session:
     """Class representing a data session that can be identified by its name.
 
     The class is implemented such that each named instance is a singleton.
@@ -34,12 +36,19 @@ class NamedSession:
         A "working" directory that serves as the root
         for storing (temporary) session data.
 
+    Raises
+    ------
+    SessionError
+        If no name is provided.
+
     """
 
     _instances = {}
     _is_inited = False
 
     def __new__(cls, *, name: str, **kwargs):
+        if not name:
+            raise SessionError("A session name is required.")
         if name not in cls._instances:
             instance = object.__new__(cls)
             instance._is_inited = False
@@ -48,12 +57,17 @@ class NamedSession:
 
     def __init__(
         self,
-        name: Optional[str] = None,
+        *,
+        name,
         basedir: Optional[Union[str, pathlib.Path]] = None,
+        scene: Scene = None,
+        settings: Settings = None,
     ) -> None:
         if not self._is_inited:
             self.name = name
             self.data = {}
+            self.scene = scene or Scene()
+            self.settings = settings or Settings()
             self.current = -1
             self.depth = 53
             self.history = []
@@ -148,7 +162,10 @@ class NamedSession:
 
         """
         self.reset()
-        self.data = compas.json_load(filepath)
+        session = compas.json_load(filepath)
+        self.data = session["data"]
+        self.scene = session["scene"]
+        self.settings = self.settings.__class__(**session["settings"])
 
     def dump(self, filepath: Union[str, pathlib.Path]) -> None:
         """Dump the data of the current session into a file.
@@ -163,7 +180,14 @@ class NamedSession:
         None
 
         """
-        compas.json_dump(self.data, filepath)
+        compas.json_dump(
+            {
+                "data": self.data,
+                "scene": self.scene,
+                "settings": self.settings.model_dump(),
+            },
+            filepath,
+        )
 
     def undo(self) -> bool:
         """Move one step backward in recorded session history.
@@ -190,8 +214,8 @@ class NamedSession:
 
         self.current -= 1
         filepath, _ = self.history[self.current]
-        self.data = compas.json_load(filepath)
 
+        self.load(filepath)
         return True
 
     def redo(self) -> bool:
@@ -215,8 +239,8 @@ class NamedSession:
 
         self.current += 1
         filepath, _ = self.history[self.current]
-        self.data = compas.json_load(filepath)
 
+        self.load(filepath)
         return True
 
     def record(self, name: str) -> None:
@@ -236,9 +260,9 @@ class NamedSession:
             if self.current < len(self.history) - 1:
                 self.history[:] = self.history[: self.current + 1]
 
-        fd, filepath = tempfile.mkstemp(dir=self.tempdir, suffix=".json", text=True)
+        _, filepath = tempfile.mkstemp(dir=self.tempdir, suffix=".json", text=True)
 
-        compas.json_dump(self.data, filepath)
+        self.dump(filepath)
         self.history.append((filepath, name))
 
         h = len(self.history)
@@ -264,27 +288,3 @@ class NamedSession:
             except Exception:
                 pass
         self.history = []
-
-    # =============================================================================
-    # Firs-class citizens
-    # =============================================================================
-
-    def scene(self, name: Optional[str] = None) -> Scene:
-        """Return the scene with the given name if it is in the session.
-        Otherwise create a new scene in the session under the given name and return it.
-
-        Parameters
-        ----------
-        name : str, optional
-            The name of the scene.
-            If none is provided, the following name is used ``f"{self.name}.Scene"``.
-
-        Returns
-        -------
-        :class:`Scene`
-
-        """
-        name = name or f"{self.name}.Scene"
-        scene: Scene = self.setdefault(name, factory=Scene)
-        scene.name = name
-        return scene
