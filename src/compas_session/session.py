@@ -80,6 +80,7 @@ class Session:
         if self.basedir:
             tempdir = pathlib.Path(self.basedir) / "temp"
             tempdir.mkdir(exist_ok=True)
+            return tempdir
 
     def __contains__(self, key):
         return key in self.data
@@ -148,7 +149,7 @@ class Session:
             self.set(key, factory())
         return self.get(key)
 
-    def load(self, filepath: Union[str, pathlib.Path]) -> None:
+    def load(self, filepath: Union[str, pathlib.Path], reset: bool = True) -> None:
         """Replace the session data with the data of a session stored in a file.
 
         Parameters
@@ -161,7 +162,8 @@ class Session:
         None
 
         """
-        self.reset()
+        if reset:
+            self.reset()
         session = compas.json_load(filepath)
         self.data = session["data"]
         self.scene = session["scene"]
@@ -215,7 +217,7 @@ class Session:
         self.current -= 1
         filepath, _ = self.history[self.current]
 
-        self.load(filepath)
+        self.load(filepath, reset=False)
         return True
 
     def redo(self) -> bool:
@@ -240,7 +242,7 @@ class Session:
         self.current += 1
         filepath, _ = self.history[self.current]
 
-        self.load(filepath)
+        self.load(filepath, reset=False)
         return True
 
     def record(self, name: str) -> None:
