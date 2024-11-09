@@ -1,2 +1,1 @@
-compas
 pydantic
