@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+* Removed `compas` from requirements to solve problem in Rhino plugins.
+
 
 ## [0.4.4] 2024-11-09
 
@@ -22,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+
 ## [0.4.3] 2024-11-09
 
 ### Added
@@ -29,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Removed
+
 
 ## [0.4.2] 2024-11-09
 
