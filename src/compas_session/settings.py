@@ -2,4 +2,5 @@ from pydantic import BaseModel
 
 
 class Settings(BaseModel):
-    autosave: bool = True
+    autosave: bool = False
+    autosync: bool = True

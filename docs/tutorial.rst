@@ -5,16 +5,14 @@ Tutorial
 More info coming soon ...
 
 
-.. code-block:: python
+Basic Usage
+===========
 
-    from compas.datastructures import Mesh
-    from compas_session.namedsession import NamedSession
+Script Workflows
+================
 
-    session = NamedSession("COMPAS")
-    scene = session.scene()
+Rhino Plugins
+=============
 
-    mesh = Mesh.from_meshgrid(10, 10)
-    scene.add(mesh)
-    scene.record("Add Mesh")
-
-    session.dump("session.json")
+Other
+=====

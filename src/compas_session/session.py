@@ -1,6 +1,7 @@
 import datetime
 import os
 import pathlib
+import shutil
 import tempfile
 from typing import Any
 from typing import Callable
@@ -43,6 +44,8 @@ class Session:
 
     """
 
+    settings: Settings
+
     _instances = {}
     _is_inited = False
 
@@ -60,27 +63,28 @@ class Session:
         *,
         name,
         basedir: Optional[Union[str, pathlib.Path]] = None,
-        scene: Scene = None,
-        settings: Settings = None,
+        scene: Optional[Scene] = None,
+        settings: Optional[Settings] = None,
+        split_files: Optional[bool] = False,
     ) -> None:
         if not self._is_inited:
             self.name = name
             self.data = {}
             self.scene = scene or Scene()
-            self.settings = settings or Settings()
+            self.settings = settings or self.__annotations__["settings"]()
             self.current = -1
             self.depth = 53
             self.history = []
             self.timestamp = int(datetime.datetime.timestamp(datetime.datetime.now()))
-            self.basedir = basedir
+            self.basedir = pathlib.Path(basedir or os.getcwd())
+            self.split_files = split_files
         self._is_inited = True
 
     @property
     def tempdir(self):
-        if self.basedir:
-            tempdir = pathlib.Path(self.basedir) / "temp"
-            tempdir.mkdir(exist_ok=True)
-            return tempdir
+        tempdir = pathlib.Path(self.basedir) / "temp"
+        tempdir.mkdir(exist_ok=True)
+        return tempdir
 
     def __contains__(self, key):
         return key in self.data
@@ -90,6 +94,17 @@ class Session:
 
     def __setitem__(self, key, value):
         self.data[key] = value
+
+    def init(self, filepath: Optional[Union[str, pathlib.Path]] = None):
+        tempdir = self.tempdir
+        if tempdir:
+            if tempdir.exists():
+                if tempdir.is_file():
+                    tempdir.unlink()
+                else:
+                    shutil.rmtree(tempdir)
+        self.reset()
+        self.dump(filepath)
 
     def get(self, key: str, default: Any = None) -> Any:
         """Return the value for `key` if `key` is in the session, else return `default` or None.
@@ -112,6 +127,31 @@ class Session:
             return default
         return self.data[key]
 
+    def get_from_file(self, filepath, name: Optional[str] = None, default: Optional[Any] = None) -> Any:
+        """Get a (named) value from a file instead of the session storage.
+
+        Parameters
+        ----------
+        filepath : str or Path
+            The source file.
+        name : str, optional
+            The name of the value in the source file.
+        default : Any, optional
+            The default value.
+
+        Returns
+        -------
+        Any
+            The value.
+
+        """
+        data = compas.json_load(filepath)
+        if name:
+            value = data.get(name, default)
+        else:
+            value = data
+        return value
+
     def set(self, key: str, value: Any) -> None:
         """Insert `key` in the session, and assign `value` to it.
 
@@ -128,6 +168,30 @@ class Session:
 
         """
         self.data[key] = value
+
+    def set_from_file(self, key, filepath, name: Optional[str] = None, default: Optional[Any] = None) -> Any:
+        """Set a key with the (named) value loaded from a file.
+
+        Parameters
+        ----------
+        key : str
+            The session key.
+        filepath : str or Path
+            The source file.
+        name : str, optional
+            The name of the value in the source file.
+        default : Any, optional
+            The default value.
+
+        Returns
+        -------
+        Any
+            The value.
+
+        """
+        value = self.get_from_file(filepath, name=name, default=default)
+        self.data[key] = value
+        return value
 
     def setdefault(self, key: str, factory: Callable) -> Any:
         """Return the value of `key` in the session.
@@ -149,7 +213,7 @@ class Session:
             self.set(key, factory())
         return self.get(key)
 
-    def load(self, filepath: Union[str, pathlib.Path], reset: bool = True) -> None:
+    def load(self, filepath: Optional[Union[str, pathlib.Path]] = None, reset: bool = True) -> None:
         """Replace the session data with the data of a session stored in a file.
 
         Parameters
@@ -162,6 +226,11 @@ class Session:
         None
 
         """
+        if not filepath:
+            if not self.basedir:
+                raise ValueError("No base directory is set and no filepath is provided.")
+            filepath = self.basedir / f"{self.name}.json"
+
         if reset:
             self.reset()
         session = compas.json_load(filepath)
@@ -169,7 +238,7 @@ class Session:
         self.scene = session["scene"]
         self.settings = self.settings.__class__(**session["settings"])
 
-    def dump(self, filepath: Union[str, pathlib.Path]) -> None:
+    def dump(self, filepath: Optional[Union[str, pathlib.Path]] = None) -> None:
         """Dump the data of the current session into a file.
 
         Parameters
@@ -182,6 +251,11 @@ class Session:
         None
 
         """
+        if not filepath:
+            if not self.basedir:
+                raise ValueError("No base directory is set and no filepath is provided.")
+            filepath = self.basedir / f"{self.name}.json"
+
         compas.json_dump(
             {
                 "data": self.data,

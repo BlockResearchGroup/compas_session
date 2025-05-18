@@ -49,10 +49,10 @@ def test_session_settings_values():
     session1 = Session(name="One")
     session2 = Session(name="Two")
 
-    assert session1.settings.autosave is True
-    assert session2.settings.autosave is True
+    assert not session1.settings.autosave
+    assert not session2.settings.autosave
 
-    session1.settings.autosave = False
+    session1.settings.autosave = True
 
-    assert session1.settings.autosave is False
-    assert session2.settings.autosave is True
+    assert session1.settings.autosave
+    assert not session2.settings.autosave
