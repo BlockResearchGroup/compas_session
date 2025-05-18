@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 
 
@@ -27,29 +28,28 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="_static/css/compas.css?v=617b33e2" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
-    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/compas.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.4cbf315f70debaebd550c87a6162cf0f.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script src="_static/documentation_options.js?v=bb99e320"></script>
-    <script src="_static/doctools.js?v=9bcbadda"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/tabs.js?v=3ee01567"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/tabs.js"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
-    <script src="_static/design-tabs.js?v=f930bc37"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/design-tabs.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
     <script>
@@ -431,6 +431,7 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="api/compas_session.html">compas_session</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_session.lazyload.LazyLoadSession.html">LazyLoadSession</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/generated/compas_session.session.Session.html">Session</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/generated/compas_session.settings.Settings.html">Settings</a></li>
 </ul>
@@ -480,6 +481,7 @@ document.write(`
  | <a href="#D"><strong>D</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#I"><strong>I</strong></a>
  | <a href="#J"><strong>J</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -493,11 +495,15 @@ document.write(`
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_session.lazyload.LazyLoadSession.clear_history.html#compas_session.lazyload.LazyLoadSession.clear_history">clear_history() (compas_session.lazyload.LazyLoadSession method)</a>
+</li>
       <li><a href="api/generated/compas_session.settings.Settings.construct.html#compas_session.settings.Settings.construct">construct() (compas_session.settings.Settings class method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/generated/compas_session.settings.Settings.copy.html#compas_session.settings.Settings.copy">copy() (compas_session.settings.Settings method)</a>
+</li>
+      <li><a href="api/generated/compas_session.lazyload.LazyLoadSession.create_dirs.html#compas_session.lazyload.LazyLoadSession.create_dirs">create_dirs() (compas_session.lazyload.LazyLoadSession method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -505,12 +511,18 @@ document.write(`
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_session.lazyload.LazyLoadSession.delete_dirs.html#compas_session.lazyload.LazyLoadSession.delete_dirs">delete_dirs() (compas_session.lazyload.LazyLoadSession method)</a>
+</li>
       <li><a href="api/generated/compas_session.settings.Settings.dict.html#compas_session.settings.Settings.dict">dict() (compas_session.settings.Settings method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/generated/compas_session.session.Session.dump.html#compas_session.session.Session.dump">dump() (compas_session.session.Session method)</a>
+      <li><a href="api/generated/compas_session.lazyload.LazyLoadSession.dump.html#compas_session.lazyload.LazyLoadSession.dump">dump() (compas_session.lazyload.LazyLoadSession method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_session.session.Session.dump.html#compas_session.session.Session.dump">(compas_session.session.Session method)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -525,7 +537,23 @@ document.write(`
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/generated/compas_session.session.Session.get.html#compas_session.session.Session.get">get() (compas_session.session.Session method)</a>
+      <li><a href="api/generated/compas_session.lazyload.LazyLoadSession.get.html#compas_session.lazyload.LazyLoadSession.get">get() (compas_session.lazyload.LazyLoadSession method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_session.session.Session.get.html#compas_session.session.Session.get">(compas_session.session.Session method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_session.session.Session.get_from_file.html#compas_session.session.Session.get_from_file">get_from_file() (compas_session.session.Session method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_session.session.Session.init.html#compas_session.session.Session.init">init() (compas_session.session.Session method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -541,8 +569,16 @@ document.write(`
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/generated/compas_session.session.Session.load.html#compas_session.session.Session.load">load() (compas_session.session.Session method)</a>
+      <li><a href="api/generated/compas_session.lazyload.LazyLoadSession.html#compas_session.lazyload.LazyLoadSession">LazyLoadSession (class in compas_session.lazyload)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_session.lazyload.LazyLoadSession.load.html#compas_session.lazyload.LazyLoadSession.load">load() (compas_session.lazyload.LazyLoadSession method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_session.session.Session.load.html#compas_session.session.Session.load">(compas_session.session.Session method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -593,12 +629,20 @@ document.write(`
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/generated/compas_session.session.Session.record.html#compas_session.session.Session.record">record() (compas_session.session.Session method)</a>
+      <li><a href="api/generated/compas_session.lazyload.LazyLoadSession.record.html#compas_session.lazyload.LazyLoadSession.record">record() (compas_session.lazyload.LazyLoadSession method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_session.session.Session.record.html#compas_session.session.Session.record">(compas_session.session.Session method)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/generated/compas_session.session.Session.redo.html#compas_session.session.Session.redo">redo() (compas_session.session.Session method)</a>
+      <li><a href="api/generated/compas_session.lazyload.LazyLoadSession.redo.html#compas_session.lazyload.LazyLoadSession.redo">redo() (compas_session.lazyload.LazyLoadSession method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_session.session.Session.redo.html#compas_session.session.Session.redo">(compas_session.session.Session method)</a>
 </li>
+      </ul></li>
       <li><a href="api/generated/compas_session.session.Session.reset.html#compas_session.session.Session.reset">reset() (compas_session.session.Session method)</a>
 </li>
   </ul></td>
@@ -613,12 +657,22 @@ document.write(`
 </li>
       <li><a href="api/generated/compas_session.session.Session.html#compas_session.session.Session">Session (class in compas_session.session)</a>
 </li>
+      <li><a href="api/generated/compas_session.lazyload.LazyLoadSession.set.html#compas_session.lazyload.LazyLoadSession.set">set() (compas_session.lazyload.LazyLoadSession method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_session.session.Session.set.html#compas_session.session.Session.set">(compas_session.session.Session method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/generated/compas_session.session.Session.set.html#compas_session.session.Session.set">set() (compas_session.session.Session method)</a>
+      <li><a href="api/generated/compas_session.session.Session.set_from_file.html#compas_session.session.Session.set_from_file">set_from_file() (compas_session.session.Session method)</a>
 </li>
-      <li><a href="api/generated/compas_session.session.Session.setdefault.html#compas_session.session.Session.setdefault">setdefault() (compas_session.session.Session method)</a>
+      <li><a href="api/generated/compas_session.lazyload.LazyLoadSession.setdefault.html#compas_session.lazyload.LazyLoadSession.setdefault">setdefault() (compas_session.lazyload.LazyLoadSession method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_session.session.Session.setdefault.html#compas_session.session.Session.setdefault">(compas_session.session.Session method)</a>
 </li>
+      </ul></li>
       <li><a href="api/generated/compas_session.settings.Settings.html#compas_session.settings.Settings">Settings (class in compas_session.settings)</a>
 </li>
   </ul></td>
@@ -627,8 +681,12 @@ document.write(`
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/generated/compas_session.session.Session.undo.html#compas_session.session.Session.undo">undo() (compas_session.session.Session method)</a>
+      <li><a href="api/generated/compas_session.lazyload.LazyLoadSession.undo.html#compas_session.lazyload.LazyLoadSession.undo">undo() (compas_session.lazyload.LazyLoadSession method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_session.session.Session.undo.html#compas_session.session.Session.undo">(compas_session.session.Session method)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/generated/compas_session.settings.Settings.update_forward_refs.html#compas_session.settings.Settings.update_forward_refs">update_forward_refs() (compas_session.settings.Settings class method)</a>
@@ -688,7 +746,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.2.1.
     <br/>
   </p>
 </div>
