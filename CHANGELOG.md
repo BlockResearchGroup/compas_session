@@ -9,10 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Added `compas_session.lazyload.LazyLoadSession`.
+* Added `tests/test_lazy.py`.
+
 ### Changed
 
 ### Removed
-
 
 ## [0.4.5] 2024-11-10
 
@@ -20,35 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-### Removed
-
-
-## [0.4.4] 2024-11-09
-
-### Added
-
-### Changed
+* Changed requirements to work better with Rhino pip.
 
 ### Removed
-
-
-## [0.4.3] 2024-11-09
-
-### Added
-
-### Changed
-
-### Removed
-
-
-## [0.4.2] 2024-11-09
-
-### Added
-
-### Changed
-
-### Removed
-
 
 ## [0.4.1] 2024-10-28
 

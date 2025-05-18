@@ -12,5 +12,6 @@ Classes
     :toctree: generated/
     :nosignatures:
 
+    lazyload.LazyLoadSession
     session.Session
     settings.Settings
