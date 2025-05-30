@@ -279,15 +279,15 @@ class LazyLoadSession:
 
         """
         if key not in self.data:
-            filepath = filepath or self.datadir / f"{key}.json"
+            filepath = pathlib.Path(filepath or self.datadir / f"{key}.json")
 
             if filepath.exists():
                 if filepath.suffix == ".obj":
                     raise NotImplementedError
                 elif filepath.suffix == ".stp":
-                    value = Brep.from_step(filepath)
+                    value = Brep.from_step(str(filepath))
                 elif filepath.suffix == ".json":
-                    value = compas.json_load(filepath)
+                    value = compas.json_load(str(filepath))
                 else:
                     raise NotImplementedError
 

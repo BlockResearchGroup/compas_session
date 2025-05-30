@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Changed `compas_session.lazyload.LazyLoadSession.get(..., filepath=...)` to convert path to a string before passing on to the constructors for compatibility with Rhino.
+
 ### Removed
 
 
