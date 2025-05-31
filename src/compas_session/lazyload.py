@@ -10,8 +10,16 @@ from typing import Union
 import compas
 from compas.geometry import Brep
 from compas.scene import Scene
+from compas.tolerance import Tolerance
 
 from .settings import Settings
+
+# NOTES
+# -----
+# a session should not be loaded explicitly
+# to load a session
+# just unset all stored data
+# this will trigger lazy re-loading of the data from the (new) system files and data dir
 
 
 class LazyLoadSessionError(Exception):
@@ -51,6 +59,7 @@ class LazyLoadSession:
     _data: dict[str, Any]
     _settings: Settings
     _scene: Scene
+    _tolerance: Tolerance
 
     # this can be overwritten in a child class
     # to influence the default settings and scene objects
@@ -64,6 +73,7 @@ class LazyLoadSession:
         basedir: Optional[Union[str, pathlib.Path]] = None,
         scene: Optional[Scene] = None,
         settings: Optional[Settings] = None,
+        tolerance: Optional[Tolerance] = None,
         depth: Optional[int] = None,
         delete_existing: bool = False,
     ):
@@ -89,6 +99,7 @@ class LazyLoadSession:
             instance._depth = depth or cls._depth
             instance._history = []
             instance._data = {}
+            instance._tolerance = tolerance or instance.load_tolerance() or Tolerance()
             instance._settings = settings or instance.settingsclass()
             instance._scene = scene or instance.sceneclass()
 
@@ -107,6 +118,7 @@ class LazyLoadSession:
         return "\n".join(
             [
                 f"Data: {self.data}",
+                f"Tolerance: {self.tolerance}",
                 f"Settings: {self.settings}",
                 f"Scene: {None}",
                 f"History: {self.history}",
@@ -152,6 +164,10 @@ class LazyLoadSession:
     @property
     def settingsfile(self) -> pathlib.Path:
         return self.sessiondir / "__settings.json"
+
+    @property
+    def tolerancefile(self) -> pathlib.Path:
+        return self.sessiondir / "__tolerance.json"
 
     @property
     def current(self):
@@ -203,6 +219,15 @@ class LazyLoadSession:
             raise ValueError
         self._data = value
 
+    @property
+    def tolerance(self) -> Tolerance:
+        return self._tolerance
+
+    @tolerance.setter
+    def tolerance(self, tolerance: Tolerance) -> None:
+        self._tolerance.update_from_dict(tolerance.__data__)
+        compas.json_dump(self._tolerance, self.tolerancefile)
+
     # =============================================================================
     # Dict behaviour
     # =============================================================================
@@ -251,6 +276,16 @@ class LazyLoadSession:
         self.tempdir.mkdir(exist_ok=True)
         self.recordsdir.mkdir(exist_ok=True)
         self.datadir.mkdir(exist_ok=True)
+
+    # =============================================================================
+    # Tolerance
+    # =============================================================================
+
+    def load_tolerance(self) -> Optional[Tolerance]:
+        if self.tolerancefile.exists():
+            tolerance = compas.json_load(self.tolerancefile)
+            if isinstance(tolerance, Tolerance):
+                return tolerance
 
     # =============================================================================
     # Data
@@ -358,18 +393,19 @@ class LazyLoadSession:
 
         history = {"depth": self.depth, "current": self.current, "records": self.history}
 
-        compas.json_dump(history, sessiondir / "__history.json")
-        compas.json_dump(self.scene, sessiondir / "__scene.json")
-        compas.json_dump(self.settings.model_dump(), sessiondir / "__settings.json")
+        compas.json_dump(history, self.historyfile)
+        compas.json_dump(self.scene, self.scenefile)
+        compas.json_dump(self.settings.model_dump(), self.settingsfile)
+        compas.json_dump(self.tolerance, self.tolerancefile)
 
         for key in self.data:
             value = self.data[key]
 
             if isinstance(value, Brep):
-                filepath = sessiondir / "__data" / f"{key}.stp"
+                filepath = self.datadir / f"{key}.stp"
                 value.to_step(filepath)
             else:
-                filepath = sessiondir / "__data" / f"{key}.json"
+                filepath = self.datadir / f"{key}.json"
                 compas.json_dump(value, filepath)
 
     def load(self, sessiondir: Optional[Union[str, pathlib.Path]] = None, clear_history: bool = True) -> None:
