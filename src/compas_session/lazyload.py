@@ -10,7 +10,7 @@ from typing import Union
 import compas
 from compas.geometry import Brep
 from compas.scene import Scene
-from compas.tolerance import Tolerance
+from compas.tolerance import TOL
 
 from .settings import Settings
 
@@ -59,7 +59,6 @@ class LazyLoadSession:
     _data: dict[str, Any]
     _settings: Settings
     _scene: Scene
-    _tolerance: Tolerance
 
     # this can be overwritten in a child class
     # to influence the default settings and scene objects
@@ -73,7 +72,6 @@ class LazyLoadSession:
         basedir: Optional[Union[str, pathlib.Path]] = None,
         scene: Optional[Scene] = None,
         settings: Optional[Settings] = None,
-        tolerance: Optional[Tolerance] = None,
         depth: Optional[int] = None,
         delete_existing: bool = False,
     ):
@@ -99,13 +97,14 @@ class LazyLoadSession:
             instance._depth = depth or cls._depth
             instance._history = []
             instance._data = {}
-            instance._tolerance = tolerance or instance.load_tolerance() or Tolerance()
             instance._settings = settings or instance.settingsclass()
             instance._scene = scene or instance.sceneclass()
 
             if delete_existing:
                 instance.delete_dirs()
             instance.create_dirs()
+
+            instance.load_tolerance()
 
         return cls._instances[name]
 
@@ -118,7 +117,6 @@ class LazyLoadSession:
         return "\n".join(
             [
                 f"Data: {self.data}",
-                f"Tolerance: {self.tolerance}",
                 f"Settings: {self.settings}",
                 f"Scene: {None}",
                 f"History: {self.history}",
@@ -219,15 +217,6 @@ class LazyLoadSession:
             raise ValueError
         self._data = value
 
-    @property
-    def tolerance(self) -> Tolerance:
-        return self._tolerance
-
-    @tolerance.setter
-    def tolerance(self, tolerance: Tolerance) -> None:
-        self._tolerance.update_from_dict(tolerance.__data__)
-        compas.json_dump(self._tolerance, self.tolerancefile)
-
     # =============================================================================
     # Dict behaviour
     # =============================================================================
@@ -281,11 +270,9 @@ class LazyLoadSession:
     # Tolerance
     # =============================================================================
 
-    def load_tolerance(self) -> Optional[Tolerance]:
+    def load_tolerance(self) -> None:
         if self.tolerancefile.exists():
-            tolerance = compas.json_load(self.tolerancefile)
-            if isinstance(tolerance, Tolerance):
-                return tolerance
+            compas.json_load(self.tolerancefile)
 
     # =============================================================================
     # Data
@@ -396,7 +383,7 @@ class LazyLoadSession:
         compas.json_dump(history, self.historyfile)
         compas.json_dump(self.scene, self.scenefile)
         compas.json_dump(self.settings.model_dump(), self.settingsfile)
-        compas.json_dump(self.tolerance, self.tolerancefile)
+        compas.json_dump(TOL, self.tolerancefile)
 
         for key in self.data:
             value = self.data[key]
@@ -408,171 +395,171 @@ class LazyLoadSession:
                 filepath = self.datadir / f"{key}.json"
                 compas.json_dump(value, filepath)
 
-    def load(self, sessiondir: Optional[Union[str, pathlib.Path]] = None, clear_history: bool = True) -> None:
-        """Replace the session data with the data of a session directory.
+    # def load(self, sessiondir: Optional[Union[str, pathlib.Path]] = None, clear_history: bool = True) -> None:
+    #     """Replace the session data with the data of a session directory.
 
-        Parameters
-        ----------
-        sessiondir : str | Path, optional
-            Location of the folder containing the session data files.
-        clear_history : bool, optional
-            Clear the current history before loading the new data.
+    #     Parameters
+    #     ----------
+    #     sessiondir : str | Path, optional
+    #         Location of the folder containing the session data files.
+    #     clear_history : bool, optional
+    #         Clear the current history before loading the new data.
 
-        Returns
-        -------
-        None
+    #     Returns
+    #     -------
+    #     None
 
-        """
-        if not sessiondir:
-            if not self.sessiondir:
-                raise ValueError("No base directory is set and no filepath is provided.")
-            sessiondir = self.sessiondir
+    #     """
+    #     if not sessiondir:
+    #         if not self.sessiondir:
+    #             raise ValueError("No base directory is set and no filepath is provided.")
+    #         sessiondir = self.sessiondir
 
-        # if clear_history:
-        #     self.clear_history()
+    #     # if clear_history:
+    #     #     self.clear_history()
 
-        if self.historyfile.exists():
-            history = compas.json_load(self.historyfile)
-            self._depth = history["depth"]
-            self._current = history["current"]
-            self._history = history["records"]
+    #     if self.historyfile.exists():
+    #         history = compas.json_load(self.historyfile)
+    #         self._depth = history["depth"]
+    #         self._current = history["current"]
+    #         self._history = history["records"]
 
-        if self.scenefile.exists():
-            self.scene = compas.json_load(self.scenefile)
+    #     if self.scenefile.exists():
+    #         self.scene = compas.json_load(self.scenefile)
 
-        if self.settingsfile.exists():
-            self.settings = self.settingsclass(**compas.json_load(self.settingsfile))
+    #     if self.settingsfile.exists():
+    #         self.settings = self.settingsclass(**compas.json_load(self.settingsfile))
 
-        if self.datadir.exists():
-            for filepath in self.datadir.iterdir():
-                name = filepath.stem
+    #     if self.datadir.exists():
+    #         for filepath in self.datadir.iterdir():
+    #             name = filepath.stem
 
-                if filepath.suffix == ".obj":
-                    raise NotImplementedError
-                elif filepath.suffix == ".stp":
-                    value = Brep.from_step(filepath)
-                elif filepath.suffix == ".json":
-                    value = compas.json_load(filepath)
-                else:
-                    raise NotImplementedError
+    #             if filepath.suffix == ".obj":
+    #                 raise NotImplementedError
+    #             elif filepath.suffix == ".stp":
+    #                 value = Brep.from_step(filepath)
+    #             elif filepath.suffix == ".json":
+    #                 value = compas.json_load(filepath)
+    #             else:
+    #                 raise NotImplementedError
 
-                self.data[name] = value
+    #             self.data[name] = value
 
-    # =============================================================================
-    # History
-    # =============================================================================
+    # # =============================================================================
+    # # History
+    # # =============================================================================
 
-    def clear_history(self) -> None:
-        """Clear session history.
+    # def clear_history(self) -> None:
+    #     """Clear session history.
 
-        Returns
-        -------
-        None
+    #     Returns
+    #     -------
+    #     None
 
-        """
-        self._current = -1
-        self._depth = self.__class__._depth
-        for record, _ in self.history:
-            folder = self.recordsdir / record
-            shutil.rmtree(folder, ignore_errors=True)
-        self._history = []
+    #     """
+    #     self._current = -1
+    #     self._depth = self.__class__._depth
+    #     for record, _ in self.history:
+    #         folder = self.recordsdir / record
+    #         shutil.rmtree(folder, ignore_errors=True)
+    #     self._history = []
 
-    def record(self, name: str) -> None:
-        """Record the current state of the session into session history.
+    # def record(self, name: str) -> None:
+    #     """Record the current state of the session into session history.
 
-        Parameters
-        ----------
-        name : str
-            The name of the current state.
+    #     Parameters
+    #     ----------
+    #     name : str
+    #         The name of the current state.
 
-        Returns
-        -------
-        None
+    #     Returns
+    #     -------
+    #     None
 
-        """
-        if self.current > -1:
-            if self.current < len(self.history) - 1:
-                self.history[:] = self.history[: self.current + 1]
+    #     """
+    #     if self.current > -1:
+    #         if self.current < len(self.history) - 1:
+    #             self.history[:] = self.history[: self.current + 1]
 
-        record = f"{datetime.datetime.timestamp(datetime.datetime.now())}"
-        folder = self.recordsdir / record
-        folder.mkdir()
-        self.history.append((record, name))
-        self.dump()
+    #     record = f"{datetime.datetime.timestamp(datetime.datetime.now())}"
+    #     folder = self.recordsdir / record
+    #     folder.mkdir()
+    #     self.history.append((record, name))
+    #     self.dump()
 
-        shutil.copytree(self.datadir, folder / "__data")
-        shutil.copy(self.scenefile, folder / "__scene.json")
-        shutil.copy(self.settingsfile, folder / "__settings.json")
+    #     shutil.copytree(self.datadir, folder / "__data")
+    #     shutil.copy(self.scenefile, folder / "__scene.json")
+    #     shutil.copy(self.settingsfile, folder / "__settings.json")
 
-        h = len(self.history)
-        if h > self.depth:
-            self.history[:] = self.history[h - self.depth :]
-        self._current = len(self.history) - 1
+    #     h = len(self.history)
+    #     if h > self.depth:
+    #         self.history[:] = self.history[h - self.depth :]
+    #     self._current = len(self.history) - 1
 
-    def undo(self) -> bool:
-        """Move one step backward in recorded session history.
+    # def undo(self) -> bool:
+    #     """Move one step backward in recorded session history.
 
-        Returns
-        -------
-        bool
-            True if the state was successfully changed.
-            False otherwise.
+    #     Returns
+    #     -------
+    #     bool
+    #         True if the state was successfully changed.
+    #         False otherwise.
 
-        Notes
-        -----
-        If there are no remaining backward steps in recorded history,
-        nothing is done and the function returns False.
+    #     Notes
+    #     -----
+    #     If there are no remaining backward steps in recorded history,
+    #     nothing is done and the function returns False.
 
-        """
-        if self.current < 0:
-            print("Nothing to undo!")
-            return False
+    #     """
+    #     if self.current < 0:
+    #         print("Nothing to undo!")
+    #         return False
 
-        if self.current == 0:
-            print("Nothing more to undo!")
-            return False
+    #     if self.current == 0:
+    #         print("Nothing more to undo!")
+    #         return False
 
-        self._current -= 1
-        record, _ = self.history[self.current]
-        folder = self.recordsdir / record
+    #     self._current -= 1
+    #     record, _ = self.history[self.current]
+    #     folder = self.recordsdir / record
 
-        if folder.exists() and folder.is_dir():
-            shutil.rmtree(self.datadir)
-            shutil.copytree(folder / "__data", self.datadir)
+    #     if folder.exists() and folder.is_dir():
+    #         shutil.rmtree(self.datadir)
+    #         shutil.copytree(folder / "__data", self.datadir)
 
-            self.scenefile.unlink()
-            shutil.copy(folder / "__scene.json", self.scenefile)
+    #         self.scenefile.unlink()
+    #         shutil.copy(folder / "__scene.json", self.scenefile)
 
-            self.settingsfile.unlink()
-            shutil.copy(folder / "__settings.json", self.settingsfile)
+    #         self.settingsfile.unlink()
+    #         shutil.copy(folder / "__settings.json", self.settingsfile)
 
-            self.load()
-            return True
+    #         self.load()
+    #         return True
 
-        return False
+    #     return False
 
-    def redo(self) -> bool:
-        """Move one step forward in recorded session history.
+    # def redo(self) -> bool:
+    #     """Move one step forward in recorded session history.
 
-        Returns
-        -------
-        bool
-            True if the state was successfully changed.
-            False otherwise.
+    #     Returns
+    #     -------
+    #     bool
+    #         True if the state was successfully changed.
+    #         False otherwise.
 
-        Notes
-        -----
-        If there are no remaining forward steps in recorded history,
-        nothing is done and the function returns False.
+    #     Notes
+    #     -----
+    #     If there are no remaining forward steps in recorded history,
+    #     nothing is done and the function returns False.
 
-        """
-        raise NotImplementedError
-        # if self.current == len(self.history) - 1:
-        #     print("Nothing more to redo!")
-        #     return False
+    #     """
+    #     raise NotImplementedError
+    #     # if self.current == len(self.history) - 1:
+    #     #     print("Nothing more to redo!")
+    #     #     return False
 
-        # self._current += 1
-        # filepath, _ = self.history[self.current]
+    #     # self._current += 1
+    #     # filepath, _ = self.history[self.current]
 
-        # self.load(filepath, reset=False)
-        # return True
+    #     # self.load(filepath, reset=False)
+    #     # return True
