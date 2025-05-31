@@ -59,7 +59,7 @@
         </script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="LazyLoadSession.clear_history" href="compas_session.lazyload.LazyLoadSession.clear_history.html" />
+    <link rel="next" title="LazyLoadSession.create_dirs" href="compas_session.lazyload.LazyLoadSession.create_dirs.html" />
     <link rel="prev" title="compas_session" href="../compas_session.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -516,7 +516,7 @@ document.write(`
 <h1>LazyLoadSession</h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="compas_session.lazyload.LazyLoadSession">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compas_session.lazyload.</span></span><span class="sig-name descname"><span class="pre">LazyLoadSession</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basedir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_existing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compas_session.lazyload.</span></span><span class="sig-name descname"><span class="pre">LazyLoadSession</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basedir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_existing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class representing a data session that can be identified by its name.</p>
 <p>The class is implemented such that each named instance is a singleton.
@@ -542,41 +542,26 @@ for storing (temporary) session data.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.clear_history.html#compas_session.lazyload.LazyLoadSession.clear_history" title="compas_session.lazyload.LazyLoadSession.clear_history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_history</span></code></a></p></td>
-<td><p>Clear session history.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.create_dirs.html#compas_session.lazyload.LazyLoadSession.create_dirs" title="compas_session.lazyload.LazyLoadSession.create_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_dirs</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.create_dirs.html#compas_session.lazyload.LazyLoadSession.create_dirs" title="compas_session.lazyload.LazyLoadSession.create_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_dirs</span></code></a></p></td>
 <td><p>Create all directories.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.delete_dirs.html#compas_session.lazyload.LazyLoadSession.delete_dirs" title="compas_session.lazyload.LazyLoadSession.delete_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_dirs</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.delete_dirs.html#compas_session.lazyload.LazyLoadSession.delete_dirs" title="compas_session.lazyload.LazyLoadSession.delete_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_dirs</span></code></a></p></td>
 <td><p>Remove all directories.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.dump.html#compas_session.lazyload.LazyLoadSession.dump" title="compas_session.lazyload.LazyLoadSession.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.dump.html#compas_session.lazyload.LazyLoadSession.dump" title="compas_session.lazyload.LazyLoadSession.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
 <td><p>Dump the data of the current session into a session directory.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.get.html#compas_session.lazyload.LazyLoadSession.get" title="compas_session.lazyload.LazyLoadSession.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.get.html#compas_session.lazyload.LazyLoadSession.get" title="compas_session.lazyload.LazyLoadSession.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a></p></td>
 <td><p>Return the value for <cite>key</cite> if <cite>key</cite> is in the session, else return <cite>default</cite> or None.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.load.html#compas_session.lazyload.LazyLoadSession.load" title="compas_session.lazyload.LazyLoadSession.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a></p></td>
-<td><p>Replace the session data with the data of a session directory.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.load_tolerance.html#compas_session.lazyload.LazyLoadSession.load_tolerance" title="compas_session.lazyload.LazyLoadSession.load_tolerance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_tolerance</span></code></a></p></td>
 <td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.record.html#compas_session.lazyload.LazyLoadSession.record" title="compas_session.lazyload.LazyLoadSession.record"><code class="xref py py-obj docutils literal notranslate"><span class="pre">record</span></code></a></p></td>
-<td><p>Record the current state of the session into session history.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.redo.html#compas_session.lazyload.LazyLoadSession.redo" title="compas_session.lazyload.LazyLoadSession.redo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">redo</span></code></a></p></td>
-<td><p>Move one step forward in recorded session history.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.set.html#compas_session.lazyload.LazyLoadSession.set" title="compas_session.lazyload.LazyLoadSession.set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a></p></td>
 <td><p>Insert <cite>key</cite> in the session, and assign <cite>value</cite> to it.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.setdefault.html#compas_session.lazyload.LazyLoadSession.setdefault" title="compas_session.lazyload.LazyLoadSession.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a></p></td>
 <td><p>Return the value of <cite>key</cite> in the session.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_session.lazyload.LazyLoadSession.undo.html#compas_session.lazyload.LazyLoadSession.undo" title="compas_session.lazyload.LazyLoadSession.undo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">undo</span></code></a></p></td>
-<td><p>Move one step backward in recorded session history.</p></td>
 </tr>
 </tbody>
 </table>
