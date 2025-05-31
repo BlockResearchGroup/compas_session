@@ -4,15 +4,13 @@ from compas_session.lazyload import LazyLoadSession, LazyLoadSessionError
 
 
 def test_session_noname():
-    with pytest.raises(TypeError):
-        LazyLoadSession()
+    session = LazyLoadSession()
+    assert session.name == "compas_session"
 
 
 def test_session_name_empty():
-    with pytest.raises(LazyLoadSessionError):
-        LazyLoadSession(name=None)
-    with pytest.raises(LazyLoadSessionError):
-        LazyLoadSession(name="")
+    session = LazyLoadSession(name="")
+    assert session.name == "compas_session"
 
 
 def test_session_singleton():
