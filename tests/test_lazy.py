@@ -1,6 +1,4 @@
-import pytest
-
-from compas_session.lazyload import LazyLoadSession, LazyLoadSessionError
+from compas_session.lazyload import LazyLoadSession
 
 
 def test_session_noname():
