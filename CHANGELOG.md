@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Changed session "name" to be an optional parameter. Name of the parent directory is used when no other name is provided.
+
 ### Removed
 
 

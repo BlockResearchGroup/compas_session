@@ -68,18 +68,21 @@ class LazyLoadSession:
     def __new__(
         cls,
         *,
-        name: str,
+        name: Optional[str] = None,
         basedir: Optional[Union[str, pathlib.Path]] = None,
         scene: Optional[Scene] = None,
         settings: Optional[Settings] = None,
         depth: Optional[int] = None,
         delete_existing: bool = False,
     ):
-        if not name:
-            # this can be used to force initialisation in a Rhino session
-            # by not providing a name in "non-init commands"
-            # for example all but one
-            raise LazyLoadSessionError("A session name is required.")
+        # if not name:
+        #     # this can be used to force initialisation in a Rhino session
+        #     # by not providing a name in "non-init commands"
+        #     # for example all but one
+        #     raise LazyLoadSessionError("A session name is required.")
+
+        basedir = pathlib.Path(basedir or os.getcwd())
+        name = name or basedir.parts[-1]
 
         if name not in cls._instances:
             # this is accessed at the beginning of every workflow script
@@ -92,7 +95,7 @@ class LazyLoadSession:
 
             instance._name = name
             instance._timestamp = int(datetime.datetime.timestamp(datetime.datetime.now()))
-            instance._basedir = pathlib.Path(basedir or os.getcwd())
+            instance._basedir = basedir
             instance._current = -1
             instance._depth = depth or cls._depth
             instance._history = []
