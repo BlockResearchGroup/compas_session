@@ -76,15 +76,16 @@ class Session:
             self.depth = 53
             self.history = []
             self.timestamp = int(datetime.datetime.timestamp(datetime.datetime.now()))
-            self.basedir = pathlib.Path(basedir or os.getcwd())
+            self.basedir = basedir
             self.split_files = split_files
         self._is_inited = True
 
     @property
     def tempdir(self):
-        tempdir = pathlib.Path(self.basedir) / "temp"
-        tempdir.mkdir(exist_ok=True)
-        return tempdir
+        if self.basedir:
+            tempdir = pathlib.Path(self.basedir) / "temp"
+            tempdir.mkdir(exist_ok=True)
+            return tempdir
 
     def __contains__(self, key):
         return key in self.data
@@ -229,7 +230,7 @@ class Session:
         if not filepath:
             if not self.basedir:
                 raise ValueError("No base directory is set and no filepath is provided.")
-            filepath = self.basedir / f"{self.name}.json"
+            filepath = pathlib.Path(self.basedir) / f"{self.name}.json"
 
         if reset:
             self.reset()
@@ -254,7 +255,7 @@ class Session:
         if not filepath:
             if not self.basedir:
                 raise ValueError("No base directory is set and no filepath is provided.")
-            filepath = self.basedir / f"{self.name}.json"
+            filepath = pathlib.Path(self.basedir) / f"{self.name}.json"
 
         compas.json_dump(
             {

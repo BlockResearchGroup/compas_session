@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Fix bug in `compas_session.session.Session.record` due to unwritable tempdir.
+
 ### Removed
 
 
