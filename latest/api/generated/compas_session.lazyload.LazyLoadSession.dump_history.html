@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
     <link rel="icon" href="../../_static/compas.ico" type="image/x-icon">
-    <title>LazyLoadSession.setdefault &#8212; COMPAS Session</title>
+    <title>LazyLoadSession.dump_history &#8212; COMPAS Session</title>
   
   
   
@@ -52,15 +52,15 @@
     <script src="../../_static/togglebutton.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/compas_session.lazyload.LazyLoadSession.setdefault';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/compas_session.lazyload.LazyLoadSession.dump_history';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/blockresearchgroup/compas_session/gh-pages/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         </script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="LazyLoadSession.undo" href="compas_session.lazyload.LazyLoadSession.undo.html" />
-    <link rel="prev" title="LazyLoadSession.set" href="compas_session.lazyload.LazyLoadSession.set.html" />
+    <link rel="next" title="LazyLoadSession.dump_scene" href="compas_session.lazyload.LazyLoadSession.dump_scene.html" />
+    <link rel="prev" title="LazyLoadSession.dump" href="compas_session.lazyload.LazyLoadSession.dump.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -500,7 +500,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="compas_session.lazyload.LazyLoadSession.html" class="nav-link">LazyLoadSession</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">LazyLoadSession.setdefault</li>
+    <li class="breadcrumb-item active" aria-current="page">LazyLoadSession.dump_history</li>
   </ul>
 </nav>
 </div>
@@ -517,25 +517,16 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="lazyloadsession-setdefault">
-<h1>LazyLoadSession.setdefault</h1>
+  <section id="lazyloadsession-dump-history">
+<h1>LazyLoadSession.dump_history</h1>
 <dl class="py method">
-<dt class="sig sig-object py" id="compas_session.lazyload.LazyLoadSession.setdefault">
-<span class="sig-prename descclassname"><span class="pre">LazyLoadSession.</span></span><span class="sig-name descname"><span class="pre">setdefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factory</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Return the value of <cite>key</cite> in the session.
-If <cite>key</cite> doesn’t exist in the session, assign and return the result of calling <cite>factory</cite>.</p>
+<dt class="sig sig-object py" id="compas_session.lazyload.LazyLoadSession.dump_history">
+<span class="sig-prename descclassname"><span class="pre">LazyLoadSession.</span></span><span class="sig-name descname"><span class="pre">dump_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Dump the session history.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>key</strong><span class="classifier">str</span></dt><dd><p>The session key.</p>
-</dd>
-<dt><strong>factory</strong><span class="classifier">Callable</span></dt><dd><p>A callable factory object to generate a valu if <cite>key</cite> is missing.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>Any</dt><dd></dd>
+<dt>None</dt><dd></dd>
 </dl>
 </dd>
 </dl>
@@ -564,7 +555,7 @@ If <cite>key</cite> doesn’t exist in the session, assign and return the result
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compas_session.lazyload.LazyLoadSession.setdefault"><code class="docutils literal notranslate"><span class="pre">LazyLoadSession.setdefault()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compas_session.lazyload.LazyLoadSession.dump_history"><code class="docutils literal notranslate"><span class="pre">LazyLoadSession.dump_history()</span></code></a></li>
 </ul>
   </nav></div>
 
