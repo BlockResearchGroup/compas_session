@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Added `compas_session.lazyload.LazyLoadSession.datadirname`.
+* Added `compas_session.lazyload.LazyLoadSession.recordsdirname`.
+* Added `compas_session.lazyload.LazyLoadSession.tempdirname`.
+* Added `compas_session.lazyload.LazyLoadSession.historyfilename`.
+* Added `compas_session.lazyload.LazyLoadSession.settingsfilename`.
+* Added `compas_session.lazyload.LazyLoadSession.versionfilename`.
+* Added `compas_session.lazyload.LazyLoadSession.tolerancefilename`.
+* Added `compas_session.lazyload.LazyLoadSession.load_tolerance`.
+* Added `compas_session.lazyload.LazyLoadSession.dump_tolerance`.
+* Added `compas_session.lazyload.LazyLoadSession.load_settings`.
+* Added `compas_session.lazyload.LazyLoadSession.dump_settings`.
+* Added `compas_session.lazyload.LazyLoadSession.load_scene`.
+* Added `compas_session.lazyload.LazyLoadSession.dump_scene`.
+* Added `compas_session.lazyload.LazyLoadSession.load_history`.
+* Added `compas_session.lazyload.LazyLoadSession.dump_history`.
+* Added `compas_session.lazyload.LazyLoadSession.load_tolerance`.
+* Added `compas_session.lazyload.LazyLoadSession.undo`.
+* Added `compas_session.lazyload.LazyLoadSession.redo`.
+
 ### Changed
 
 ### Removed
