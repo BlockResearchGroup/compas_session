@@ -1,7 +1,7 @@
 import datetime
-import os
 import pathlib
 import shutil
+import sys
 from typing import Any
 from typing import Callable
 from typing import Optional
@@ -41,7 +41,8 @@ class LazyLoadSession:
 
     """
 
-    _instances = {}
+    # _instances = {}
+    _instance = None
 
     _name: str
     _timestamp: int
@@ -68,12 +69,23 @@ class LazyLoadSession:
         depth: Optional[int] = None,
         delete_existing: bool = False,
     ):
-        basedir = pathlib.Path(basedir or os.getcwd())
-        name = name or basedir.parts[-1]
+        if cls._instance is None:
+            if basedir:
+                basedir = pathlib.Path(basedir)
+            else:
+                basedir = pathlib.Path(sys.argv[0]).resolve().parent
 
-        if name not in cls._instances:
+            if not name:
+                for filepath in basedir.iterdir():
+                    if filepath.is_dir():
+                        if filepath.suffix == ".session":
+                            name = filepath.stem
+                            break
+
+            if not name:
+                name = basedir.parts[-1]
+
             instance = object.__new__(cls)
-            cls._instances[name] = instance
 
             instance._name = name
             instance._timestamp = int(datetime.datetime.timestamp(datetime.datetime.now()))
@@ -91,7 +103,9 @@ class LazyLoadSession:
 
             instance.load_tolerance()
 
-        return cls._instances[name]
+            cls._instance = instance
+
+        return cls._instance
 
     def __init__(self, **kwargs) -> None:
         # this is accessed when the singleton is accessed in Rhino during consecutive command calls
