@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Added `LazyLoadSession.delete` to delete items from the data store.
+
 ### Changed
+
+* Changed `LazyLoadSession` initialisation to create parents for required directories if necessary.
 
 ### Removed
 

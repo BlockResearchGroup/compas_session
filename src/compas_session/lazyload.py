@@ -19,6 +19,38 @@ class LazyLoadSessionError(Exception):
     pass
 
 
+# Sessiondir
+# - tolerance.json
+# - version(s).json
+# - states
+# -- <state identifier>
+# --- scene.json
+# --- settings.json
+# --- data
+# ---- <key>.json
+# ---- <key>.json
+# ---- <key>.json
+# ---- <key>.json
+#
+# Recording a state
+# 1. dump current state to active record
+# 2. copy active record to record with different name
+# 3. add record name to history
+# 4. remove all records forward from active (no more redo possible, only undo)
+#
+# Undo
+# 1. dump current state to active record
+# 2. set active record to current - 1, if possible
+# 3. clear data dict
+# 4. load scene (link scene object items to matching data items based on guid)
+#
+# Redo
+# 1. dump current state to active record
+# 2. set active record to current + 1, if possible
+# 3. clear data dict
+# 4. load scene (link scene object items to matching data items based on guid)
+
+
 class LazyLoadSession:
     """Class representing a data session that can be identified by its name.
 
@@ -41,7 +73,6 @@ class LazyLoadSession:
 
     """
 
-    # _instances = {}
     _instance = None
 
     _name: str
@@ -297,10 +328,10 @@ class LazyLoadSession:
         None
 
         """
-        self.sessiondir.mkdir(exist_ok=True)
-        self.tempdir.mkdir(exist_ok=True)
-        self.recordsdir.mkdir(exist_ok=True)
-        self.datadir.mkdir(exist_ok=True)
+        self.sessiondir.mkdir(exist_ok=True, parents=True)
+        self.tempdir.mkdir(exist_ok=True, parents=True)
+        self.recordsdir.mkdir(exist_ok=True, parents=True)
+        self.datadir.mkdir(exist_ok=True, parents=True)
 
     # =============================================================================
     # Tolerance
@@ -458,12 +489,40 @@ class LazyLoadSession:
             self.set(key, factory())
         return self.get(key)
 
+    def delete(self, key: str) -> None:
+        """Delete a data item from storage.
+
+        Parameters
+        ----------
+        key : str
+            The name of the item.
+
+        Returns
+        -------
+        None
+
+        """
+        if key in self.data:
+            del self.data[key]
+
+        filepath = self.datadir / f"{key}.json"
+        if filepath.exists():
+            filepath.unlink()
+
+        filepath = self.datadir / f"{key}.obj"
+        if filepath.exists():
+            filepath.unlink()
+
+        filepath = self.datadir / f"{key}.stp"
+        if filepath.exists():
+            filepath.unlink()
+
     # =============================================================================
     # Complete state
     # =============================================================================
 
     def dump(self, sessiondir: Optional[Union[str, pathlib.Path]] = None) -> None:
-        """Dump the data of the current session into a session directory.
+        """Dump the data of the current session into the session directory.
 
         Parameters
         ----------
@@ -482,6 +541,11 @@ class LazyLoadSession:
         sessiondir = pathlib.Path(sessiondir)
 
         self.dump_history()
+        # self.dump_scene()
+        # self.dump_settings()
+        # self.dump_tolerance()
+        # self.dump_version()
+        # self.dump_data()
 
         compas.json_dump(self.scene, self.scenefile)
         compas.json_dump(self.settings.model_dump(), self.settingsfile)
