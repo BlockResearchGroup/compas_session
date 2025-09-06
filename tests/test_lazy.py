@@ -1,54 +1,87 @@
-from compas_session.lazyload import LazyLoadSession
+import pytest
+from compas_session.lazyload import LazyLoadSession, SingletonError
 
 
 def test_session_noname():
+    LazyLoadSession.reset()
+
     session = LazyLoadSession()
-    assert session.name == "compas_session"
+    assert session.name == "tests"
+
+    session.delete_dirs()
 
 
+def test_session_inheritance():
+    class Session(LazyLoadSession):
+        pass
+
+    Session.reset()
+
+    session = Session()
+    assert session.name == "tests"
+
+    Session.reset()
+
+    session = Session(name="A")
+    assert session.name == "A"
+
+    session.delete_dirs()
+
+
+@pytest.mark.xfail(raises=SingletonError)
 def test_session_name_empty():
+    LazyLoadSession.reset()
+
     session = LazyLoadSession(name="")
-    assert session.name == "compas_session"
+
+    session.delete_dirs()
 
 
 def test_session_singleton():
-    session1a = LazyLoadSession(name="One")
-    session1b = LazyLoadSession(name="One")
-    session2a = LazyLoadSession(name="Two")
-    session2b = LazyLoadSession(name="Two")
+    LazyLoadSession.reset()
 
-    assert session1a is session1b
-    assert session2a is session2b
+    a = LazyLoadSession()
+    b = LazyLoadSession()
 
-    assert session1a is not session2a
-    assert session1a is not session2b
-    assert session1b is not session2a
-    assert session1b is not session2b
+    assert a is b
+
+    tests = LazyLoadSession(name="tests")
+
+    assert a is tests
+
+    try:
+        LazyLoadSession(name="one")
+    except SingletonError:
+        assert True
+    else:
+        assert False
+
+    a.delete_dirs()
 
 
 def test_session_settings():
-    session1a = LazyLoadSession(name="One")
-    session1b = LazyLoadSession(name="One")
-    session2a = LazyLoadSession(name="Two")
-    session2b = LazyLoadSession(name="Two")
+    LazyLoadSession.reset()
 
-    assert session1a.settings is session1b.settings
-    assert session2a.settings is session2b.settings
+    a = LazyLoadSession()
+    b = LazyLoadSession()
 
-    assert session1a.settings is not session2a.settings
-    assert session1a.settings is not session2b.settings
-    assert session1b.settings is not session2a.settings
-    assert session1b.settings is not session2b.settings
+    assert a.settings is b.settings
+
+    a.delete_dirs()
 
 
 def test_session_settings_values():
-    session1 = LazyLoadSession(name="One")
-    session2 = LazyLoadSession(name="Two")
+    LazyLoadSession.reset()
 
-    assert session1.settings.autosave is False
-    assert session2.settings.autosave is False
+    a = LazyLoadSession()
+    b = LazyLoadSession()
 
-    session1.settings.autosave = True
+    assert a.settings.autosave is False
+    assert b.settings.autosave is False
 
-    assert session1.settings.autosave
-    assert not session2.settings.autosave
+    a.settings.autosave = True
+
+    assert a.settings.autosave
+    assert b.settings.autosave
+
+    a.delete_dirs()

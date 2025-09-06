@@ -15,6 +15,10 @@ from compas.tolerance import TOL
 from .settings import Settings
 
 
+class SingletonError(Exception):
+    pass
+
+
 class LazyLoadSessionError(Exception):
     pass
 
@@ -73,6 +77,10 @@ class LazyLoadSession:
 
     """
 
+    @classmethod
+    def reset(cls):
+        cls._instance = None
+
     _instance = None
 
     _name: str
@@ -104,7 +112,9 @@ class LazyLoadSession:
             if basedir:
                 basedir = pathlib.Path(basedir)
             else:
-                basedir = pathlib.Path(sys.argv[0]).resolve().parent
+                # basedir = pathlib.Path(sys.argv[0]).resolve().parent
+                # basedir = pathlib.Path().cwd()
+                basedir = pathlib.Path(sys._getframe(1).f_globals["__file__"]).parent
 
             if not name:
                 for filepath in basedir.iterdir():
@@ -141,6 +151,10 @@ class LazyLoadSession:
     def __init__(self, **kwargs) -> None:
         # this is accessed when the singleton is accessed in Rhino during consecutive command calls
         # or for example during a live session on a server
+        if "name" in kwargs:
+            name = kwargs["name"]
+            if name != self.name:
+                raise SingletonError
         self.load_history()
 
     def __str__(self) -> str:
