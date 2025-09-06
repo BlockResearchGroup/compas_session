@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Added `LazyLoadSession.delete` to delete items from the data store.
+* Added classmethod `LazyLoadSession.delete_instance` to delete the existing instance of a session.
 
 ### Changed
 

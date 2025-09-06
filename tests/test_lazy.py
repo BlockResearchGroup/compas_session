@@ -3,7 +3,7 @@ from compas_session.lazyload import LazyLoadSession, SingletonError
 
 
 def test_session_noname():
-    LazyLoadSession.reset()
+    LazyLoadSession.delete_instance()
 
     session = LazyLoadSession()
     assert session.name == "tests"
@@ -15,12 +15,12 @@ def test_session_inheritance():
     class Session(LazyLoadSession):
         pass
 
-    Session.reset()
+    Session.delete_instance()
 
     session = Session()
     assert session.name == "tests"
 
-    Session.reset()
+    Session.delete_instance()
 
     session = Session(name="A")
     assert session.name == "A"
@@ -30,7 +30,7 @@ def test_session_inheritance():
 
 @pytest.mark.xfail(raises=SingletonError)
 def test_session_name_empty():
-    LazyLoadSession.reset()
+    LazyLoadSession.delete_instance()
 
     session = LazyLoadSession(name="")
 
@@ -38,7 +38,7 @@ def test_session_name_empty():
 
 
 def test_session_singleton():
-    LazyLoadSession.reset()
+    LazyLoadSession.delete_instance()
 
     a = LazyLoadSession()
     b = LazyLoadSession()
@@ -60,7 +60,7 @@ def test_session_singleton():
 
 
 def test_session_settings():
-    LazyLoadSession.reset()
+    LazyLoadSession.delete_instance()
 
     a = LazyLoadSession()
     b = LazyLoadSession()
@@ -71,7 +71,7 @@ def test_session_settings():
 
 
 def test_session_settings_values():
-    LazyLoadSession.reset()
+    LazyLoadSession.delete_instance()
 
     a = LazyLoadSession()
     b = LazyLoadSession()

@@ -78,7 +78,7 @@ class LazyLoadSession:
     """
 
     @classmethod
-    def reset(cls):
+    def delete_instance(cls):
         cls._instance = None
 
     _instance = None
