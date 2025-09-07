@@ -57,6 +57,15 @@ def test_session_singleton():
         assert False
 
     a.delete_dirs()
+    LazyLoadSession.delete_instance()
+
+    a = LazyLoadSession(name="A")
+    b = LazyLoadSession()
+
+    assert a is b
+    assert a.name == "A"
+    assert b.name == "A"
+    a.delete_dirs()
 
 
 def test_session_settings():
