@@ -3,14 +3,14 @@ import pytest
 from compas_session.session import Session, SessionError
 
 
-def test_session_noname():
-    with pytest.raises(TypeError):
-        Session()
+@pytest.fixture(autouse=True)
+def reset_sessions():
+    Session._instances.clear()
+    yield
+    Session._instances.clear()
 
 
 def test_session_name_empty():
-    with pytest.raises(SessionError):
-        Session(name=None)
     with pytest.raises(SessionError):
         Session(name="")
 

@@ -1,0 +1,65 @@
+site_name: COMPAS Session
+site_url: https://blockresearchgroup.github.io/compas_session/
+
+repo_name: blockresearchgroup/compas_session
+repo_url: https://github.com/blockresearchgroup/compas_session/
+
+copyright: Copyright &copy; ETH Zurich, Block Research Group
+
+theme:
+  name: material
+  features:
+    - content.code.copy
+    - navigation.footer
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - toc.follow
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [src]
+          inventories:
+            - https://docs.python.org/3/objects.inv
+            - https://compas.dev/compas/latest/objects.inv
+          options:
+            docstring_style: numpy
+            docstring_section_style: table
+            inherited_members: false
+            merge_init_into_class: true
+            modernize_annotations: true
+            separate_signature: true
+            show_bases: false
+            show_root_full_path: true
+            show_signature_annotations: true
+            show_source: false
+            signature_crossrefs: true
+
+nav:
+  - Overview: index.md
+  - Installation: installation.md
+  - Tutorial: tutorial.md
+  - Reference:
+      - Overview: reference/index.md
+      - Lazy-load sessions: reference/lazyload.md
+      - Sessions: reference/session.md
+      - Settings: reference/settings.md
+  - Changelog: changelog.md
+  - License: license.md

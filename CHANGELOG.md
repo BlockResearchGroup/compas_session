@@ -9,9 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Added a reproducible uv development lock, Pyright checks, strict MkDocs documentation, and typed-distribution verification.
+
 ### Changed
 
+* Changed the supported Python versions to 3.12 through 3.14.
+* Changed tests and package artifact checks to write generated files only to temporary directories.
+* Changed repository workflows to immutable actions, release pull requests, and trusted publishing.
+
 ### Removed
+
+* Removed obsolete requirements files, Black configuration, Sphinx documentation, and unused GHUser build tasks.
 
 
 ## [0.7.0] 2025-09-06

@@ -1,11 +1,12 @@
 import datetime
+import os
 import pathlib
 import shutil
 import sys
+from collections.abc import Callable
 from typing import Any
-from typing import Callable
-from typing import Optional
-from typing import Union
+from typing import ClassVar
+from typing import Self
 
 import compas
 from compas.geometry import Brep
@@ -16,10 +17,14 @@ from .settings import Settings
 
 
 class SingletonError(Exception):
+    """Raised when the active singleton is requested with another name."""
+
     pass
 
 
 class LazyLoadSessionError(Exception):
+    """Base exception for lazy-load session errors."""
+
     pass
 
 
@@ -58,30 +63,24 @@ class LazyLoadSessionError(Exception):
 class LazyLoadSession:
     """Class representing a data session that can be identified by its name.
 
-    The class is implemented such that each named instance is a singleton.
-    This means that during the lifetime of a program only one instance with a specific can exist,
-    and that all sessions created with the same name, refer to the same session object instance.
-
-    Parameters
-    ----------
-    name : str
-        The name of the unique object instance.
-    basedir : str or Path-like, optional
-        A "working" directory that serves as the root
-        for storing (temporary) session data.
+    A lazy-load session stores data in separate files below its session
+    directory. Only one instance exists per class during the lifetime of a
+    process.
 
     Raises
     ------
-    SessionError
-        If no name is provided.
+    SingletonError
+        If the active singleton is requested with a different name.
 
     """
 
     @classmethod
-    def delete_instance(cls):
+    def delete_instance(cls) -> None:
+        """Forget the active singleton instance without deleting its files."""
+
         cls._instance = None
 
-    _instance = None
+    _instance: ClassVar[Any | None] = None
 
     _name: str
     _timestamp: int
@@ -95,19 +94,19 @@ class LazyLoadSession:
 
     # this can be overwritten in a child class
     # to influence the default settings and scene objects
-    settingsclass = Settings
-    sceneclass = Scene
+    settingsclass: ClassVar[type[Settings]] = Settings
+    sceneclass: ClassVar[type[Scene]] = Scene
 
     def __new__(
         cls,
         *,
-        name: Optional[str] = None,
-        basedir: Optional[Union[str, pathlib.Path]] = None,
-        scene: Optional[Scene] = None,
-        settings: Optional[Settings] = None,
-        depth: Optional[int] = None,
+        name: str | None = None,
+        basedir: str | os.PathLike[str] | None = None,
+        scene: Scene | None = None,
+        settings: Settings | None = None,
+        depth: int | None = None,
         delete_existing: bool = False,
-    ):
+    ) -> Self:
         if cls._instance is None:
             if basedir:
                 basedir = pathlib.Path(basedir)
@@ -148,7 +147,7 @@ class LazyLoadSession:
 
         return cls._instance
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         # this is accessed when the singleton is accessed in Rhino during consecutive command calls
         # or for example during a live session on a server
         if "name" in kwargs:
@@ -169,99 +168,147 @@ class LazyLoadSession:
         )
 
     @property
-    def name(self):
+    def name(self) -> str:
+        """str: Name of the session."""
+
         return self._name
 
     @property
-    def timestamp(self):
+    def timestamp(self) -> int:
+        """int: Unix timestamp captured when the session was created."""
+
         return self._timestamp
 
     @property
-    def basedir(self):
+    def basedir(self) -> pathlib.Path:
+        """pathlib.Path: Working directory containing the session directory."""
+
         return self._basedir
 
     @property
     def sessiondir(self) -> pathlib.Path:
+        """pathlib.Path: Root directory of this session."""
+
         return self.basedir / f"{self.name}.session"
 
     @property
     def datadirname(self) -> str:
+        """str: Name of the data directory."""
+
         return "data"
 
     @property
     def datadir(self) -> pathlib.Path:
+        """pathlib.Path: Directory containing separately stored data values."""
+
         return self.sessiondir / self.datadirname
 
     @property
     def recordsdirname(self) -> str:
+        """str: Name of the history-record directory."""
+
         return "__records"
 
     @property
     def recordsdir(self) -> pathlib.Path:
+        """pathlib.Path: Directory containing history records."""
+
         return self.sessiondir / self.recordsdirname
 
     @property
     def tempdirname(self) -> str:
+        """str: Name of the session temporary directory."""
+
         return "__temp"
 
     @property
     def tempdir(self) -> pathlib.Path:
+        """pathlib.Path: Session temporary directory."""
+
         return self.sessiondir / self.tempdirname
 
     @property
     def historyfilename(self) -> str:
+        """str: Filename of the history metadata."""
+
         return "_history.json"
 
     @property
     def historyfile(self) -> pathlib.Path:
+        """pathlib.Path: Path of the history metadata."""
+
         return self.sessiondir / self.historyfilename
 
     @property
     def scenefilename(self) -> str:
+        """str: Filename of the serialized scene."""
+
         return "_scene.json"
 
     @property
     def scenefile(self) -> pathlib.Path:
+        """pathlib.Path: Path of the serialized scene."""
+
         return self.sessiondir / self.scenefilename
 
     @property
     def settingsfilename(self) -> str:
+        """str: Filename of the serialized settings."""
+
         return "_settings.json"
 
     @property
     def settingsfile(self) -> pathlib.Path:
+        """pathlib.Path: Path of the serialized settings."""
+
         return self.sessiondir / self.settingsfilename
 
     @property
     def tolerancefilename(self) -> str:
+        """str: Filename of the serialized COMPAS tolerance."""
+
         return "_tolerance.json"
 
     @property
     def tolerancefile(self) -> pathlib.Path:
+        """pathlib.Path: Path of the serialized COMPAS tolerance."""
+
         return self.sessiondir / self.tolerancefilename
 
     @property
     def versionfilename(self) -> str:
+        """str: Filename of the serialized COMPAS version."""
+
         return "_version.json"
 
     @property
     def versionfile(self) -> pathlib.Path:
+        """pathlib.Path: Path of the serialized COMPAS version."""
+
         return self.sessiondir / self.versionfilename
 
     @property
-    def current(self):
+    def current(self) -> int:
+        """int: Index of the active history record."""
+
         return self._current
 
     @property
-    def depth(self):
+    def depth(self) -> int:
+        """int: Maximum number of history records retained."""
+
         return self._depth
 
     @property
-    def history(self):
+    def history(self) -> list[tuple[str, str]]:
+        """list[tuple[str, str]]: Record identifiers and their names."""
+
         return self._history
 
     @property
-    def scene(self):
+    def scene(self) -> Scene:
+        """compas.scene.Scene: Scene stored by the session."""
+
         if not self._scene:
             if self.scenefile.exists():
                 scene = compas.json_load(self.scenefile)
@@ -270,30 +317,34 @@ class LazyLoadSession:
         return self._scene
 
     @scene.setter
-    def scene(self, value):
+    def scene(self, value: Scene) -> None:
         if not isinstance(value, self.sceneclass):
             raise ValueError
         self._scene = value
 
     @property
-    def settings(self):
+    def settings(self) -> Settings:
+        """Settings: Settings stored by the session."""
+
         if not self._settings:
             if self.settingsfile.exists():
                 self._settings = self.settingsclass(**compas.json_load(self.settingsfile))
         return self._settings
 
     @settings.setter
-    def settings(self, value):
+    def settings(self, value: Settings) -> None:
         if not isinstance(value, self.settingsclass):
             raise ValueError
         self._settings = value
 
     @property
-    def data(self):
+    def data(self) -> dict[str, Any]:
+        """dict[str, Any]: Values currently loaded in memory."""
+
         return self._data
 
     @data.setter
-    def data(self, value):
+    def data(self, value: dict[str, Any]) -> None:
         if not isinstance(value, self.__class__.__annotations__["_data"].__origin__):
             raise ValueError
         self._data = value
@@ -302,19 +353,19 @@ class LazyLoadSession:
     # Dict behaviour
     # =============================================================================
 
-    def __contains__(self, key) -> bool:
+    def __contains__(self, key: Any) -> bool:
         value = self.get(key)
         if value is None and key not in self.data:
             return False
         return True
 
-    def __getitem__(self, key) -> Any:
+    def __getitem__(self, key: str) -> Any:
         value = self.get(key)
         if value is None and key not in self.data:
             raise KeyError
         return value
 
-    def __setitem__(self, key, value) -> None:
+    def __setitem__(self, key: str, value: Any) -> None:
         self.set(key, value)
 
     # =============================================================================
@@ -322,26 +373,14 @@ class LazyLoadSession:
     # =============================================================================
 
     def delete_dirs(self) -> None:
-        """Remove all directories.
-
-        Returns
-        -------
-        None
-
-        """
+        """Remove all directories."""
         shutil.rmtree(self.datadir, ignore_errors=True)
         shutil.rmtree(self.recordsdir, ignore_errors=True)
         shutil.rmtree(self.tempdir, ignore_errors=True)
         shutil.rmtree(self.sessiondir, ignore_errors=True)
 
     def create_dirs(self) -> None:
-        """Create all directories.
-
-        Returns
-        -------
-        None
-
-        """
+        """Create all directories."""
         self.sessiondir.mkdir(exist_ok=True, parents=True)
         self.tempdir.mkdir(exist_ok=True, parents=True)
         self.recordsdir.mkdir(exist_ok=True, parents=True)
@@ -352,24 +391,12 @@ class LazyLoadSession:
     # =============================================================================
 
     def load_tolerance(self) -> None:
-        """Load the tolerance from the corresponding session file, if it exists.
-
-        Returns
-        -------
-        None
-
-        """
+        """Load the tolerance from the corresponding session file, if it exists."""
         if self.tolerancefile.exists():
             compas.json_load(self.tolerancefile)
 
     def dump_tolerance(self) -> None:
-        """Dump the current tolerance setting to the corresponding session file.
-
-        Returns
-        -------
-        None
-
-        """
+        """Dump the current tolerance setting to the corresponding session file."""
         compas.json_dump(TOL, self.tolerancefile)
 
     # =============================================================================
@@ -377,24 +404,12 @@ class LazyLoadSession:
     # =============================================================================
 
     def load_settings(self) -> None:
-        """Load the settings from the corresponding session file, if it exists.
-
-        Returns
-        -------
-        None
-
-        """
+        """Load the settings from the corresponding session file, if it exists."""
         if self.settingsfile.exists():
             self.settings = compas.json_load(self.settingsfile)
 
     def dump_settings(self) -> None:
-        """Dump the current settings to the corresponding session file.
-
-        Returns
-        -------
-        None
-
-        """
+        """Dump the current settings to the corresponding session file."""
         compas.json_dump(self.settings, self.settingsfile)
 
     # =============================================================================
@@ -402,38 +417,31 @@ class LazyLoadSession:
     # =============================================================================
 
     def load_scene(self) -> None:
-        """Load the scene from the corresponding session file, if it exists.
-
-        Returns
-        -------
-        None
-
-        """
+        """Load the scene from the corresponding session file, if it exists."""
         if self.scenefile.exists():
             self.scene = compas.json_load(self.scenefile)
 
     def dump_scene(self) -> None:
-        """Dump the current scene to the corresponding session file.
-
-        Returns
-        -------
-        None
-
-        """
+        """Dump the current scene to the corresponding session file."""
         compas.json_dump(self.scene, self.scenefile)
 
     # =============================================================================
     # Data
     # =============================================================================
 
-    def get(self, key: str, default: Any = None, filepath: Optional[pathlib.Path] = None) -> Any:
+    def get(
+        self,
+        key: str,
+        default: Any = None,
+        filepath: str | os.PathLike[str] | None = None,
+    ) -> Any:
         """Return the value for `key` if `key` is in the session, else return `default` or None.
 
         Parameters
         ----------
-        key : str
+        key
             The identifier of the data value.
-        default : Any, optional
+        default
             A default value.
 
         Returns
@@ -442,10 +450,8 @@ class LazyLoadSession:
             The session data value corresponding to the key/identifier,
             or the default value if no entry with the given key/identifier exists.
 
-        Raises
-        ------
-        KeyError
-            If the value with the requested key is not available in the session and no default is given.
+        filepath
+            Optional explicit source file. JSON and STEP files are supported.
 
         """
         if key not in self.data:
@@ -469,30 +475,26 @@ class LazyLoadSession:
 
         Parameters
         ----------
-        key : str
+        key
             The session key.
-        value : Any
+        value
             The value assigned to `key` in the session.
-
-        Returns
-        -------
-        None
 
         """
         self.data[key] = value
         if self.settings.autosync:
             compas.json_dump(value, self.datadir / f"{key}.json")
 
-    def setdefault(self, key: str, factory: Callable) -> Any:
+    def setdefault(self, key: str, factory: Callable[[], Any]) -> Any:
         """Return the value of `key` in the session.
         If `key` doesn't exist in the session, assign and return the result of calling `factory`.
 
         Parameters
         ----------
-        key : str
+        key
             The session key.
-        factory : Callable
-            A callable factory object to generate a valu if `key` is missing.
+        factory
+            A callable factory object to generate a value if `key` is missing.
 
         Returns
         -------
@@ -508,12 +510,8 @@ class LazyLoadSession:
 
         Parameters
         ----------
-        key : str
+        key
             The name of the item.
-
-        Returns
-        -------
-        None
 
         """
         if key in self.data:
@@ -535,17 +533,14 @@ class LazyLoadSession:
     # Complete state
     # =============================================================================
 
-    def dump(self, sessiondir: Optional[Union[str, pathlib.Path]] = None) -> None:
+    def dump(self, sessiondir: str | os.PathLike[str] | None = None) -> None:
         """Dump the data of the current session into the session directory.
 
         Parameters
         ----------
-        sessiondir : str | Path
-            Location of the file containing the session data.
-
-        Returns
-        -------
-        None
+        sessiondir
+            Reserved destination directory. The current implementation writes
+            to this session's configured directory.
 
         """
         if not sessiondir:
@@ -581,13 +576,7 @@ class LazyLoadSession:
     # =============================================================================
 
     def load_history(self) -> None:
-        """Load the session history.
-
-        Returns
-        -------
-        None
-
-        """
+        """Load the session history."""
         if self.historyfile.exists():
             history = compas.json_load(self.historyfile)
             self._depth = history["depth"]
@@ -595,24 +584,12 @@ class LazyLoadSession:
             self._history = history["records"]
 
     def dump_history(self) -> None:
-        """Dump the session history.
-
-        Returns
-        -------
-        None
-
-        """
+        """Dump the session history."""
         history = {"depth": self.depth, "current": self.current, "records": self.history}
         compas.json_dump(history, self.historyfile)
 
     def clear_history(self) -> None:
-        """Clear session history.
-
-        Returns
-        -------
-        None
-
-        """
+        """Clear session history."""
         self._current = -1
         self._depth = self.__class__._depth
         for record, _ in self.history:
@@ -625,12 +602,8 @@ class LazyLoadSession:
 
         Parameters
         ----------
-        name : str
+        name
             The name of the recording.
-
-        Returns
-        -------
-        None
 
         """
         if self.current > -1:

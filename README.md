@@ -14,12 +14,12 @@ Stable releases can be installed from PyPI.
 pip install compas_session
 ```
 
-To install the latest version for development, do:
+To install the latest version for development with uv:
 
 ```bash
 git clone https://github.com/blockresearchgroup/compas_session.git
 cd compas_session
-pip install -e ".[dev]"
+uv sync --frozen --group dev --group docs
 ```
 
 ## Documentation

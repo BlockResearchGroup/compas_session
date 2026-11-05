@@ -3,10 +3,10 @@ import os
 import pathlib
 import shutil
 import tempfile
+from collections.abc import Callable
 from typing import Any
-from typing import Callable
-from typing import Optional
-from typing import Union
+from typing import ClassVar
+from typing import Self
 
 import compas
 import compas.data
@@ -19,23 +19,30 @@ from .settings import Settings
 
 
 class SessionError(Exception):
+    """Raised when a session cannot be created."""
+
     pass
 
 
 class Session:
     """Class representing a data session that can be identified by its name.
 
-    The class is implemented such that each named instance is a singleton.
-    This means that during the lifetime of a program only one instance with a specific can exist,
-    and that all sessions created with the same name, refer to the same session object instance.
+    Each named session is a singleton. During the lifetime of a process, calls
+    using the same name return the same object.
 
     Parameters
     ----------
-    name : str
+    name
         The name of the unique object instance.
-    basedir : str or Path-like, optional
-        A "working" directory that serves as the root
-        for storing (temporary) session data.
+    basedir
+        The working directory used to store session data.
+    scene
+        The initial COMPAS scene.
+    settings
+        The initial session settings.
+    split_files
+        Stored on the session for clients that manage split persistence. The
+        current implementation does not otherwise use this value.
 
     Raises
     ------
@@ -46,10 +53,20 @@ class Session:
 
     settings: Settings
 
-    _instances = {}
-    _is_inited = False
+    _instances: ClassVar[dict[str, Any]] = {}
+    _is_inited: bool = False
 
-    def __new__(cls, *, name: str, **kwargs):
+    name: str
+    data: dict[str, Any]
+    scene: Scene
+    current: int
+    depth: int
+    history: list[tuple[str, str]]
+    timestamp: int
+    basedir: str | os.PathLike[str] | None
+    split_files: bool
+
+    def __new__(cls, *, name: str, **kwargs: Any) -> Self:
         if not name:
             raise SessionError("A session name is required.")
         if name not in cls._instances:
@@ -61,11 +78,11 @@ class Session:
     def __init__(
         self,
         *,
-        name,
-        basedir: Optional[Union[str, pathlib.Path]] = None,
-        scene: Optional[Scene] = None,
-        settings: Optional[Settings] = None,
-        split_files: Optional[bool] = False,
+        name: str,
+        basedir: str | os.PathLike[str] | None = None,
+        scene: Scene | None = None,
+        settings: Settings | None = None,
+        split_files: bool = False,
     ) -> None:
         if not self._is_inited:
             self.name = name
@@ -81,22 +98,32 @@ class Session:
         self._is_inited = True
 
     @property
-    def tempdir(self):
+    def tempdir(self) -> pathlib.Path | None:
+        """Path of the temporary storage directory, if a base directory is set."""
+
         if self.basedir:
             tempdir = pathlib.Path(self.basedir) / "temp"
             tempdir.mkdir(exist_ok=True)
             return tempdir
 
-    def __contains__(self, key):
+    def __contains__(self, key: Any) -> bool:
         return key in self.data
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         return self.data[key]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any) -> None:
         self.data[key] = value
 
-    def init(self, filepath: Optional[Union[str, pathlib.Path]] = None):
+    def init(self, filepath: str | os.PathLike[str] | None = None) -> None:
+        """Reset the session and write its initial state.
+
+        Parameters
+        ----------
+        filepath
+            Destination file. If omitted, the default session file is used.
+
+        """
         tempdir = self.tempdir
         if tempdir:
             if tempdir.exists():
@@ -112,9 +139,9 @@ class Session:
 
         Parameters
         ----------
-        key : str
+        key
             The identifier of the data value.
-        default : Any, optional
+        default
             A default value.
 
         Returns
@@ -128,16 +155,21 @@ class Session:
             return default
         return self.data[key]
 
-    def get_from_file(self, filepath, name: Optional[str] = None, default: Optional[Any] = None) -> Any:
+    def get_from_file(
+        self,
+        filepath: str | os.PathLike[str],
+        name: str | None = None,
+        default: Any = None,
+    ) -> Any:
         """Get a (named) value from a file instead of the session storage.
 
         Parameters
         ----------
-        filepath : str or Path
+        filepath
             The source file.
-        name : str, optional
+        name
             The name of the value in the source file.
-        default : Any, optional
+        default
             The default value.
 
         Returns
@@ -158,30 +190,32 @@ class Session:
 
         Parameters
         ----------
-        key : str
+        key
             The session key.
-        value : Any
+        value
             The value assigned to `key` in the session.
-
-        Returns
-        -------
-        None
 
         """
         self.data[key] = value
 
-    def set_from_file(self, key, filepath, name: Optional[str] = None, default: Optional[Any] = None) -> Any:
+    def set_from_file(
+        self,
+        key: str,
+        filepath: str | os.PathLike[str],
+        name: str | None = None,
+        default: Any = None,
+    ) -> Any:
         """Set a key with the (named) value loaded from a file.
 
         Parameters
         ----------
-        key : str
+        key
             The session key.
-        filepath : str or Path
+        filepath
             The source file.
-        name : str, optional
+        name
             The name of the value in the source file.
-        default : Any, optional
+        default
             The default value.
 
         Returns
@@ -194,16 +228,16 @@ class Session:
         self.data[key] = value
         return value
 
-    def setdefault(self, key: str, factory: Callable) -> Any:
+    def setdefault(self, key: str, factory: Callable[[], Any]) -> Any:
         """Return the value of `key` in the session.
         If `key` doesn't exist in the session, assign and return the result of calling `factory`.
 
         Parameters
         ----------
-        key : str
+        key
             The session key.
-        factory : Callable
-            A callable factory object to generate a valu if `key` is missing.
+        factory
+            A callable factory object to generate a value if `key` is missing.
 
         Returns
         -------
@@ -214,17 +248,15 @@ class Session:
             self.set(key, factory())
         return self.get(key)
 
-    def load(self, filepath: Optional[Union[str, pathlib.Path]] = None, reset: bool = True) -> None:
+    def load(self, filepath: str | os.PathLike[str] | None = None, reset: bool = True) -> None:
         """Replace the session data with the data of a session stored in a file.
 
         Parameters
         ----------
-        filepath : str | Path
+        filepath
             Location of the file containing the session data.
-
-        Returns
-        -------
-        None
+        reset
+            Whether to clear the current state before loading.
 
         """
         if not filepath:
@@ -239,17 +271,13 @@ class Session:
         self.scene = session["scene"]
         self.settings = self.settings.__class__(**session["settings"])
 
-    def dump(self, filepath: Optional[Union[str, pathlib.Path]] = None) -> None:
+    def dump(self, filepath: str | os.PathLike[str] | None = None) -> None:
         """Dump the data of the current session into a file.
 
         Parameters
         ----------
-        filepath : str | Path
-            Location of the file containing the session data.
-
-        Returns
-        -------
-        None
+        filepath
+            Destination file. If omitted, the default session file is used.
 
         """
         if not filepath:
@@ -325,12 +353,8 @@ class Session:
 
         Parameters
         ----------
-        name : str
+        name
             The name of the current state.
-
-        Returns
-        -------
-        None
 
         """
         if self.current > -1:
@@ -348,13 +372,7 @@ class Session:
         self.current = len(self.history) - 1
 
     def reset(self) -> None:
-        """Reset session history.
-
-        Returns
-        -------
-        None
-
-        """
+        """Reset session history."""
         self.current = -1
         self.depth = 53
         for filepath, eventname in self.history:
