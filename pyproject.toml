@@ -65,7 +65,7 @@ Issues = "https://github.com/blockresearchgroup/compas_session/issues"
 Forum = "https://forum.compas-framework.org/"
 
 [tool.uv.sources]
-compas = { git = "https://github.com/compas-dev/compas.git", rev = "9b1518f74fe7d0315626954d8b893756f8dae06d" }
+compas = { git = "https://github.com/compas-dev/compas.git", rev = "3c1a2e8e0e5c4c14292ecf4bb38c82e5b977273e" }
 
 # ============================================================================
 # setuptools config
@@ -130,6 +130,7 @@ replace = "[{new_version}] {now:%Y-%m-%d}"
 line-length = 179
 indent-width = 4
 target-version = "py312"
+extend-exclude = ["docs/*.md", "docs/**/*.md"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]
@@ -157,5 +158,5 @@ docstring-code-format = true
 docstring-code-line-length = "dynamic"
 
 [tool.pyright]
-include = ["src/compas_session"]
+include = ["src/compas_session", "docs/examples"]
 pythonVersion = "3.12"

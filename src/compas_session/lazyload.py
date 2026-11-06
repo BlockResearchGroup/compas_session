@@ -9,6 +9,8 @@ from typing import ClassVar
 from typing import Self
 
 import compas
+from compas.data import json_dump
+from compas.data import json_load
 from compas.geometry import Brep
 from compas.scene import Scene
 from compas.tolerance import TOL
@@ -311,7 +313,7 @@ class LazyLoadSession:
 
         if not self._scene:
             if self.scenefile.exists():
-                scene = compas.json_load(self.scenefile)
+                scene = json_load(self.scenefile)
                 if isinstance(scene, self.sceneclass):
                     self._scene = scene
         return self._scene
@@ -328,7 +330,7 @@ class LazyLoadSession:
 
         if not self._settings:
             if self.settingsfile.exists():
-                self._settings = self.settingsclass(**compas.json_load(self.settingsfile))
+                self._settings = self.settingsclass(**json_load(self.settingsfile))
         return self._settings
 
     @settings.setter
@@ -393,11 +395,11 @@ class LazyLoadSession:
     def load_tolerance(self) -> None:
         """Load the tolerance from the corresponding session file, if it exists."""
         if self.tolerancefile.exists():
-            compas.json_load(self.tolerancefile)
+            json_load(self.tolerancefile)
 
     def dump_tolerance(self) -> None:
         """Dump the current tolerance setting to the corresponding session file."""
-        compas.json_dump(TOL, self.tolerancefile)
+        json_dump(TOL, self.tolerancefile)
 
     # =============================================================================
     # Settings
@@ -406,11 +408,11 @@ class LazyLoadSession:
     def load_settings(self) -> None:
         """Load the settings from the corresponding session file, if it exists."""
         if self.settingsfile.exists():
-            self.settings = compas.json_load(self.settingsfile)
+            self.settings = json_load(self.settingsfile)
 
     def dump_settings(self) -> None:
         """Dump the current settings to the corresponding session file."""
-        compas.json_dump(self.settings, self.settingsfile)
+        json_dump(self.settings, self.settingsfile)
 
     # =============================================================================
     # Scene
@@ -419,11 +421,11 @@ class LazyLoadSession:
     def load_scene(self) -> None:
         """Load the scene from the corresponding session file, if it exists."""
         if self.scenefile.exists():
-            self.scene = compas.json_load(self.scenefile)
+            self.scene = json_load(self.scenefile)
 
     def dump_scene(self) -> None:
         """Dump the current scene to the corresponding session file."""
-        compas.json_dump(self.scene, self.scenefile)
+        json_dump(self.scene, self.scenefile)
 
     # =============================================================================
     # Data
@@ -443,15 +445,14 @@ class LazyLoadSession:
             The identifier of the data value.
         default
             A default value.
+        filepath
+            Optional explicit source file. JSON and STEP files are supported.
 
         Returns
         -------
         Any
             The session data value corresponding to the key/identifier,
             or the default value if no entry with the given key/identifier exists.
-
-        filepath
-            Optional explicit source file. JSON and STEP files are supported.
 
         """
         if key not in self.data:
@@ -463,7 +464,7 @@ class LazyLoadSession:
                 elif filepath.suffix == ".stp":
                     value = Brep.from_step(str(filepath))
                 elif filepath.suffix == ".json":
-                    value = compas.json_load(str(filepath))
+                    value = json_load(str(filepath))
                 else:
                     raise NotImplementedError
 
@@ -483,7 +484,7 @@ class LazyLoadSession:
         """
         self.data[key] = value
         if self.settings.autosync:
-            compas.json_dump(value, self.datadir / f"{key}.json")
+            json_dump(value, self.datadir / f"{key}.json")
 
     def setdefault(self, key: str, factory: Callable[[], Any]) -> Any:
         """Return the value of `key` in the session.
@@ -556,10 +557,10 @@ class LazyLoadSession:
         # self.dump_version()
         # self.dump_data()
 
-        compas.json_dump(self.scene, self.scenefile)
-        compas.json_dump(self.settings.model_dump(), self.settingsfile)
-        compas.json_dump(TOL, self.tolerancefile)
-        compas.json_dump(compas.__version__, self.versionfile)
+        json_dump(self.scene, self.scenefile)
+        json_dump(self.settings.model_dump(), self.settingsfile)
+        json_dump(TOL, self.tolerancefile)
+        json_dump(compas.__version__, self.versionfile)
 
         for key in self.data:
             value = self.data[key]
@@ -569,7 +570,7 @@ class LazyLoadSession:
                 value.to_step(filepath)
             else:
                 filepath = self.datadir / f"{key}.json"
-                compas.json_dump(value, filepath)
+                json_dump(value, filepath)
 
     # =============================================================================
     # History
@@ -578,15 +579,15 @@ class LazyLoadSession:
     def load_history(self) -> None:
         """Load the session history."""
         if self.historyfile.exists():
-            history = compas.json_load(self.historyfile)
+            history = json_load(self.historyfile)
             self._depth = history["depth"]
             self._current = history["current"]
-            self._history = history["records"]
+            self._history = [(record, name) for record, name in history["records"]]
 
     def dump_history(self) -> None:
         """Dump the session history."""
         history = {"depth": self.depth, "current": self.current, "records": self.history}
-        compas.json_dump(history, self.historyfile)
+        json_dump(history, self.historyfile)
 
     def clear_history(self) -> None:
         """Clear session history."""

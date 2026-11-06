@@ -2,7 +2,7 @@ name: build
 
 on:
   pull_request:
-    branches: [main, initiative/repository-modernisation]
+    branches: [main, c3-upgrade, initiative/repository-modernisation]
   push:
     branches: [main]
 
@@ -15,7 +15,6 @@ concurrency:
 
 jobs:
   quality:
-    if: "!contains(github.event.pull_request.labels.*.name, 'docs-only')"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -58,11 +57,16 @@ jobs:
         shell: bash
         run: |
           uv run python .github/verify_distributions.py "${RUNNER_TEMP}/dist"
+          uv run twine check "${RUNNER_TEMP}"/dist/*
           uv venv "${RUNNER_TEMP}/wheel-env"
           uv pip install \
             --python "${RUNNER_TEMP}/wheel-env/bin/python" \
-            "compas @ git+https://github.com/compas-dev/compas.git@9b1518f74fe7d0315626954d8b893756f8dae06d" \
+            "compas @ git+https://github.com/compas-dev/compas.git@3c1a2e8e0e5c4c14292ecf4bb38c82e5b977273e" \
             "pydantic>=2"
           uv pip install --python "${RUNNER_TEMP}/wheel-env/bin/python" --no-deps "${RUNNER_TEMP}"/dist/*.whl
+          cp tests/typing/installed_consumer.py "${RUNNER_TEMP}/installed_consumer.py"
           cd "${RUNNER_TEMP}"
-          "${RUNNER_TEMP}/wheel-env/bin/python" -c "from compas_session.lazyload import LazyLoadSession"
+          "${RUNNER_TEMP}/wheel-env/bin/python" "${RUNNER_TEMP}/installed_consumer.py"
+          uv run --project "${GITHUB_WORKSPACE}" pyright \
+            --pythonpath "${RUNNER_TEMP}/wheel-env/bin/python" \
+            "${RUNNER_TEMP}/installed_consumer.py"

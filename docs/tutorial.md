@@ -7,17 +7,7 @@ is constructed with the same name. Use a base directory when you want the
 default dump path to be predictable.
 
 ```python
-from tempfile import TemporaryDirectory
-
-from compas_session.session import Session
-
-with TemporaryDirectory() as directory:
-    session = Session(name="design", basedir=directory)
-    session["iteration"] = 1
-    session.dump()
-
-    assert Session(name="design") is session
-    assert session["iteration"] == 1
+--8<-- "docs/examples/store_session.py"
 ```
 
 Calling `record(name)` writes a temporary snapshot. `undo()` and `redo()` move
@@ -30,18 +20,7 @@ through the recorded snapshots when another state is available.
 it immediately to the session's `data` directory because `autosync` is enabled.
 
 ```python
-from tempfile import TemporaryDirectory
-
-from compas_session.lazyload import LazyLoadSession
-
-with TemporaryDirectory() as directory:
-    session = LazyLoadSession(name="design", basedir=directory)
-    session["iteration"] = 1
-    assert session["iteration"] == 1
-
-    session.record("first iteration")
-    session.delete_dirs()
-    LazyLoadSession.delete_instance()
+--8<-- "docs/examples/store_lazy_session.py"
 ```
 
 Call `delete_instance()` when an application intentionally ends the singleton's
@@ -55,7 +34,5 @@ clients should autosave and whether lazy-load assignments should be synchronized
 to disk.
 
 ```python
-from compas_session.settings import Settings
-
-settings = Settings(autosave=False, autosync=True)
+--8<-- "docs/examples/configure_synchronization.py"
 ```

@@ -8,11 +8,14 @@ from typing import Any
 from typing import ClassVar
 from typing import Self
 
-import compas
 import compas.data
 import compas.datastructures
 import compas.geometry
-import compas.tolerance
+
+# Import the tolerance data class before deserializing session payloads.
+import compas.tolerance  # noqa: F401
+from compas.data import json_dump
+from compas.data import json_load
 from compas.scene import Scene
 
 from .settings import Settings
@@ -178,7 +181,7 @@ class Session:
             The value.
 
         """
-        data = compas.json_load(filepath)
+        data = json_load(filepath)
         if name:
             value = data.get(name, default)
         else:
@@ -266,7 +269,7 @@ class Session:
 
         if reset:
             self.reset()
-        session = compas.json_load(filepath)
+        session = json_load(filepath)
         self.data = session["data"]
         self.scene = session["scene"]
         self.settings = self.settings.__class__(**session["settings"])
@@ -285,7 +288,7 @@ class Session:
                 raise ValueError("No base directory is set and no filepath is provided.")
             filepath = pathlib.Path(self.basedir) / f"{self.name}.json"
 
-        compas.json_dump(
+        json_dump(
             {
                 "data": self.data,
                 "scene": self.scene,
