@@ -1,6 +1,7 @@
 import pytest
 
 from compas_session.session import Session, SessionError
+from compas_session.settings import Settings
 
 
 @pytest.fixture(autouse=True)
@@ -56,3 +57,17 @@ def test_session_settings_values():
 
     assert session1.settings.autosave
     assert not session2.settings.autosave
+
+
+def test_session_uses_explicit_settings_class_contract():
+    class CustomSettings(Settings):
+        custom: bool = True
+
+    class CustomSession(Session):
+        __annotations__ = {}
+        settingsclass = CustomSettings
+
+    session = CustomSession(name="Custom")
+
+    assert isinstance(session.settings, CustomSettings)
+    assert session.settings.custom

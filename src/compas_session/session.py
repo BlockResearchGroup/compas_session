@@ -52,8 +52,15 @@ class Session:
     SessionError
         If no name is provided.
 
+    Attributes
+    ----------
+    settingsclass
+        The settings type constructed when no explicit settings are provided.
+        Subclasses can override this class attribute with a `Settings` subtype.
+
     """
 
+    settingsclass: ClassVar[type[Settings]] = Settings
     settings: Settings
 
     _instances: ClassVar[dict[str, Any]] = {}
@@ -91,7 +98,7 @@ class Session:
             self.name = name
             self.data = {}
             self.scene = scene or Scene()
-            self.settings = settings or self.__annotations__["settings"]()
+            self.settings = settings or self.settingsclass()
             self.current = -1
             self.depth = 53
             self.history = []
